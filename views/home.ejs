@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/public/css/custom.css" />
+    <title>Shop giày - Trang chủ</title>
+  </head>
+  <body class="bg-slate-100 text-slate-800">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold text-blue-700">SneakerHub</a>
+        <div class="flex items-center gap-3 text-sm">
+          <a href="/cart" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">
+            Giỏ hàng
+            <span id="cartCount" class="ml-1 inline-flex items-center justify-center text-xs bg-blue-600 text-white rounded-full px-2">
+              0
+            </span>
+          </a>
+          <a href="/orders" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">Đơn hàng</a>
+          <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+            Xin chào, <strong><%= user.fullName %></strong> (thành viên)
+          </div>
+          <button
+            id="logoutBtn"
+            class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50"
+          >
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 space-y-8">
+      <section class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-6">
+        <h1 class="text-2xl md:text-3xl font-bold mb-2">Khuyến mãi mùa hè - giảm tới 30%</h1>
+        <p class="opacity-95">Mua 2 đôi giảm thêm 5%, miễn phí vận chuyển toàn quốc.</p>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-semibold mb-3">Thông tin nổi bật</h2>
+        <div class="grid md:grid-cols-3 gap-4">
+          <article class="bg-white rounded-xl p-4 shadow-sm">
+            <p class="text-sm text-slate-500 mb-1">Khuyến mãi</p>
+            <h3 class="font-semibold mb-2">Sản phẩm đang giảm giá</h3>
+            <div class="text-sm text-slate-600"><%= promotions.map((p) => p.name).join(", ") %></div>
+          </article>
+          <article class="bg-white rounded-xl p-4 shadow-sm">
+            <p class="text-sm text-slate-500 mb-1">Mới nhất</p>
+            <h3 class="font-semibold mb-2">Sản phẩm vừa cập nhật</h3>
+            <div class="text-sm text-slate-600"><%= newest.map((p) => p.name).join(", ") %></div>
+          </article>
+          <article class="bg-white rounded-xl p-4 shadow-sm">
+            <p class="text-sm text-slate-500 mb-1">Bán chạy</p>
+            <h3 class="font-semibold mb-2">Top xu hướng</h3>
+            <div class="text-sm text-slate-600"><%= bestSellers.map((p) => p.name).join(", ") %></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-4 md:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Top 10 sản phẩm nổi bật</h2>
+          <p class="text-sm text-slate-500">Phân trang ngang theo từng nhóm</p>
+        </div>
+        <div class="grid lg:grid-cols-2 gap-5">
+          <article class="border border-slate-200 rounded-xl p-3">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Top 10 bán chạy</h3>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="top-nav-btn px-2 py-1 rounded border border-slate-300 text-sm"
+                  data-top-type="best-selling"
+                  data-top-action="prev"
+                >
+                  ←
+                </button>
+                <span id="bestSellingPage" class="text-xs text-slate-500"></span>
+                <button
+                  type="button"
+                  class="top-nav-btn px-2 py-1 rounded border border-slate-300 text-sm"
+                  data-top-type="best-selling"
+                  data-top-action="next"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+            <div id="bestSellingList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </article>
+
+          <article class="border border-slate-200 rounded-xl p-3">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-semibold">Top 10 xem nhiều</h3>
+              <div class="flex items-center gap-2">
+                <button
+                  type="button"
+                  class="top-nav-btn px-2 py-1 rounded border border-slate-300 text-sm"
+                  data-top-type="most-viewed"
+                  data-top-action="prev"
+                >
+                  ←
+                </button>
+                <span id="mostViewedPage" class="text-xs text-slate-500"></span>
+                <button
+                  type="button"
+                  class="top-nav-btn px-2 py-1 rounded border border-slate-300 text-sm"
+                  data-top-type="most-viewed"
+                  data-top-action="next"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+            <div id="mostViewedList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-4 md:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Sản phẩm theo danh mục (Lazy loading)</h2>
+          <p id="categoryResultCount" class="text-sm text-slate-500"></p>
+        </div>
+        <div id="categoryTabs" class="flex flex-wrap gap-2 mb-4">
+          <% categories.forEach((category, index) => { %>
+          <button
+            type="button"
+            class="category-tab px-3 py-1.5 rounded-full border text-sm <%= index === 0 ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-700' %>"
+            data-category="<%= category %>"
+          >
+            <%= category %>
+          </button>
+          <% }) %>
+        </div>
+        <div id="categoryProductList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+        <p id="categoryLoading" class="text-center text-sm text-slate-500 mt-4 hidden">Đang tải thêm sản phẩm...</p>
+        <div id="categorySentinel" class="h-6"></div>
+      </section>
+
+      <section class="bg-white rounded-2xl p-4 md:p-5 shadow-sm">
+        <h2 class="text-xl font-semibold mb-4">Tìm kiếm và lọc sản phẩm (API)</h2>
+        <form id="filterForm" class="grid md:grid-cols-4 gap-3">
+          <input
+            class="border rounded-lg px-3 py-2"
+            name="q"
+            placeholder="Tìm theo tên/mô tả/danh mục"
+          />
+          <select class="border rounded-lg px-3 py-2" name="category">
+            <option value="">Tất cả danh mục</option>
+            <% categories.forEach((category) => { %>
+            <option value="<%= category %>"><%= category %></option>
+            <% }) %>
+          </select>
+          <input class="border rounded-lg px-3 py-2" name="minPrice" type="number" placeholder="Giá từ" />
+          <input class="border rounded-lg px-3 py-2" name="maxPrice" type="number" placeholder="Giá đến" />
+          <select class="border rounded-lg px-3 py-2" name="minRating">
+            <option value="">Đánh giá từ</option>
+            <option value="4">4 sao</option>
+            <option value="4.5">4.5 sao</option>
+            <option value="4.8">4.8 sao</option>
+          </select>
+          <select class="border rounded-lg px-3 py-2" name="sort">
+            <option value="newest">Mới nhất</option>
+            <option value="best-seller">Bán chạy</option>
+            <option value="price-asc">Giá tăng dần</option>
+            <option value="price-desc">Giá giảm dần</option>
+          </select>
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="onlyInStock" value="true" />
+            Chỉ hiển thị còn hàng
+          </label>
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="isNew" value="true" />
+            Chỉ sản phẩm mới
+          </label>
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" name="bestSeller" value="true" />
+            Chỉ bán chạy
+          </label>
+          <button class="bg-blue-600 text-white rounded-lg px-3 py-2 font-medium" type="submit">
+            Áp dụng bộ lọc
+          </button>
+        </form>
+      </section>
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xl font-semibold">Danh sách sản phẩm</h2>
+          <p class="text-sm text-slate-500" id="resultCount"></p>
+        </div>
+        <div id="productList" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+      </section>
+    </main>
+
+    <script>
+      window.__PRODUCTS__ = <%- JSON.stringify(products) %>;
+      window.__CATEGORIES__ = <%- JSON.stringify(categories) %>;
+    </script>
+    <script src="/public/js/nav.js"></script>
+    <script src="/public/js/home.js"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/public/css/custom.css" />
+    <title>Giỏ hàng</title>
+  </head>
+  <body class="bg-slate-100 text-slate-800">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold text-blue-700">SneakerHub</a>
+        <div class="flex items-center gap-3 text-sm">
+          <a href="/cart" class="px-3 py-1.5 rounded-lg border border-blue-600 text-blue-600 bg-blue-50">
+            Giỏ hàng
+            <span id="cartCount" class="ml-1 inline-flex items-center justify-center text-xs bg-blue-600 text-white rounded-full px-2">
+              0
+            </span>
+          </a>
+          <a href="/orders" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">Đơn hàng</a>
+          <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
+            Xin chào, <strong><%= user.fullName %></strong>
+          </div>
+          <button
+            id="logoutBtn"
+            class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50"
+          >
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+      <section class="bg-white rounded-2xl p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <h1 class="text-2xl font-bold">Giỏ hàng của bạn</h1>
+          <div class="flex items-center gap-2">
+            <button
+              id="clearCartBtn"
+              class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-sm"
+              type="button"
+            >
+              Xóa giỏ hàng
+            </button>
+            <a
+              id="checkoutBtn"
+              href="/checkout"
+              class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 text-sm"
+            >
+              Thanh toán
+            </a>
+          </div>
+        </div>
+        <div id="cartContent" class="space-y-4"></div>
+        <div id="cartSummary" class="mt-6 border-t border-slate-200 pt-4"></div>
+      </section>
+    </main>
+
+    <script src="/public/js/nav.js"></script>
+    <script src="/public/js/cart.js"></script>
+  </body>
+</html>
