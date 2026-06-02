@@ -3,59 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Giỏ hàng của bạn tại SneakerHub." />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/public/css/custom.css" />
-    <title>Giỏ hàng</title>
+    <title>Giỏ hàng – SneakerHub</title>
   </head>
-  <body class="bg-slate-100 text-slate-800">
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="/" class="text-xl font-bold text-blue-700">SneakerHub</a>
-        <div class="flex items-center gap-3 text-sm">
-          <a href="/cart" class="px-3 py-1.5 rounded-lg border border-blue-600 text-blue-600 bg-blue-50">
-            Giỏ hàng
-            <span id="cartCount" class="ml-1 inline-flex items-center justify-center text-xs bg-blue-600 text-white rounded-full px-2">
-              0
-            </span>
+  <body>
+    <!-- ══ HEADER ══════════════════════════════════════ -->
+    <header class="site-header">
+      <div style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+        <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
+        <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+          <a href="/cart" class="nav-link active" id="cartNavLink">
+            🛒 Giỏ hàng
+            <span id="cartCount" class="cart-badge">0</span>
           </a>
-          <a href="/orders" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">Đơn hàng</a>
-          <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-            Xin chào, <strong><%= user.fullName %></strong>
-          </div>
-          <button
-            id="logoutBtn"
-            class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50"
-          >
-            Đăng xuất
-          </button>
-        </div>
+          <a href="/orders" class="nav-link">📦 Đơn hàng</a>
+          <span class="nav-user">👤 <strong><%= user.fullName %></strong></span>
+          <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">Đăng xuất</button>
+        </nav>
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-      <section class="bg-white rounded-2xl p-5 shadow-sm">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <h1 class="text-2xl font-bold">Giỏ hàng của bạn</h1>
-          <div class="flex items-center gap-2">
-            <button
-              id="clearCartBtn"
-              class="px-3 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 text-sm"
-              type="button"
-            >
-              Xóa giỏ hàng
-            </button>
-            <a
-              id="checkoutBtn"
-              href="/checkout"
-              class="px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 text-sm"
-            >
-              Thanh toán
-            </a>
+    <!-- ══ MAIN ════════════════════════════════════════ -->
+    <main style="max-width:900px;margin:0 auto;padding:1.5rem 1.25rem;">
+
+      <div class="panel fade-up">
+        <!-- Title row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;">
+          <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-.3px;">🛒 Giỏ hàng của bạn</h1>
+          <div style="display:flex;gap:.5rem;">
+            <button id="clearCartBtn" class="btn btn-danger btn-sm" type="button">Xóa tất cả</button>
+            <a id="checkoutBtn" href="/checkout" class="btn btn-primary btn-sm">Thanh toán →</a>
           </div>
         </div>
-        <div id="cartContent" class="space-y-4"></div>
-        <div id="cartSummary" class="mt-6 border-t border-slate-200 pt-4"></div>
-      </section>
+
+        <!-- Items -->
+        <div id="cartContent"></div>
+
+        <!-- Summary -->
+        <div id="cartSummary" style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--clr-border);"></div>
+      </div>
     </main>
 
     <script src="/public/js/nav.js"></script>

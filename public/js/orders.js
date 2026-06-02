@@ -22,6 +22,13 @@ const statusLabelMap = {
   cancel_requested: "Đã gửi yêu cầu hủy"
 };
 
+const nextStatusLabelMap = {
+  new: "Xác nhận đơn",
+  confirmed: "Bắt đầu chuẩn bị hàng",
+  preparing: "Bàn giao cho shipper",
+  shipping: "Xác nhận đã giao"
+};
+
 function formatDate(value) {
   return new Date(value).toLocaleString("vi-VN");
 }
@@ -31,11 +38,40 @@ async function fetchOrders() {
   return response.json();
 }
 
+const STEPS = [
+  { key: "new",       label: "Đặt hàng" },
+  { key: "confirmed", label: "Xác nhận" },
+  { key: "preparing", label: "Chuẩn bị" },
+  { key: "shipping",  label: "Đang giao" },
+  { key: "delivered", label: "Đã giao" }
+];
+
+const STATUS_FLOW = ["new", "confirmed", "preparing", "shipping", "delivered"];
+
+function renderStepper(currentStatus) {
+  if (currentStatus === "canceled" || currentStatus === "cancel_requested") {
+    const col = currentStatus === "canceled" ? "#dc2626" : "#ea580c";
+    const lbl = currentStatus === "canceled" ? "Đã hủy đơn" : "Yêu cầu hủy đang xử lý";
+    return `<div style="font-size:.82rem;font-weight:600;color:${col};padding:.4rem .85rem;border-radius:99px;background:#fee2e2;display:inline-block;">✕ ${lbl}</div>`;
+  }
+  const currentIdx = STATUS_FLOW.indexOf(currentStatus);
+  const steps = STEPS.map((step, idx) => {
+    const done   = idx < currentIdx;
+    const active = idx === currentIdx;
+    const cls    = done ? "done" : active ? "active" : "";
+    const icon   = done ? "✓" : idx + 1;
+    return `<div class="status-step ${cls}"><div class="step-dot">${icon}</div><div class="step-label">${step.label}</div></div>`;
+  }).join("");
+  return `<div class="status-stepper">${steps}</div>`;
+}
+
 function renderOrders(orders) {
   if (!orders.length) {
     ordersList.innerHTML = `
-      <div class="bg-slate-50 rounded-xl p-6 text-center text-slate-500">
-        Bạn chưa có đơn hàng nào. <a href="/" class="text-blue-600 hover:underline">Mua sắm ngay</a>
+      <div class="panel" style="text-align:center;padding:3rem 1rem;">
+        <div style="font-size:3rem;margin-bottom:.75rem;">📦</div>
+        <p style="color:var(--clr-muted);margin-bottom:1rem;">Bạn chưa có đơn hàng nào.</p>
+        <a href="/" class="btn btn-primary btn-sm">Mua sắm ngay</a>
       </div>
     `;
     return;
@@ -43,92 +79,52 @@ function renderOrders(orders) {
 
   ordersList.innerHTML = orders
     .map((order) => {
-      const badgeClass = statusClassMap[order.status] || "bg-slate-100 text-slate-600";
       const cancelLabel = order.canRequestCancel ? "Gửi yêu cầu hủy" : "Hủy đơn";
-
       return `
-        <details class="border border-slate-200 rounded-xl p-4">
-          <summary class="cursor-pointer flex flex-wrap items-center justify-between gap-3">
+        <details class="panel" style="padding:1.1rem 1.25rem;">
+          <summary style="cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem;list-style:none;">
             <div>
-              <p class="text-sm text-slate-500">Mã đơn: <strong>${order.code}</strong></p>
-              <p class="text-xs text-slate-400">${formatDate(order.createdAt)}</p>
+              <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--clr-primary-light);margin-bottom:.2rem;">Mã đơn hàng</div>
+              <div style="font-size:.95rem;font-weight:700;">${order.code}</div>
+              <div style="font-size:.74rem;color:var(--clr-muted);margin-top:.1rem;">${formatDate(order.createdAt)}</div>
             </div>
-            <div class="flex items-center gap-3">
-              <span class="text-xs px-2 py-1 rounded-full ${badgeClass}">${order.statusLabel}</span>
-              <span class="text-sm font-semibold text-blue-700">${formatter.format(order.total)}đ</span>
+            <div style="display:flex;align-items:center;gap:.65rem;">
+              <span style="font-size:.74rem;font-weight:600;padding:.22rem .7rem;border-radius:99px;background:var(--clr-primary-faint);color:var(--clr-primary-text);border:1px solid var(--clr-border);">${order.statusLabel}</span>
+              <span style="font-size:1.05rem;font-weight:800;color:var(--clr-primary);">${formatter.format(order.total)}đ</span>
+              <span style="font-size:.8rem;color:var(--clr-muted);">▾</span>
             </div>
           </summary>
-          <div class="mt-4 space-y-4">
-            <div class="grid md:grid-cols-2 gap-3 text-sm">
-              <div>
-                <p class="text-slate-500">Người nhận</p>
-                <p class="font-medium">${order.recipientName}</p>
-                <p class="text-slate-500">${order.phone}</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Địa chỉ</p>
-                <p class="font-medium">${order.address}</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Thanh toán</p>
-                <p class="font-medium">${order.paymentMethod}</p>
-              </div>
-              <div>
-                <p class="text-slate-500">Ghi chú</p>
-                <p class="font-medium">${order.note || "Không có"}</p>
-              </div>
+
+          <div style="margin-top:1.1rem;display:flex;flex-direction:column;gap:1.25rem;">
+            <div>
+              <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--clr-text-soft);margin-bottom:.6rem;">Theo dõi trạng thái</div>
+              ${renderStepper(order.status)}
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.55rem;">
+              <div class="stat-chip"><span>Người nhận</span><strong>${order.recipientName}</strong></div>
+              <div class="stat-chip"><span>Điện thoại</span><strong>${order.phone}</strong></div>
+              <div class="stat-chip"><span>Thanh toán</span><strong>${order.paymentMethod}</strong></div>
+              <div class="stat-chip" style="grid-column:1/-1;"><span>Địa chỉ</span><strong>${order.address}</strong></div>
+              ${order.note ? `<div class="stat-chip"><span>Ghi chú</span><strong>${order.note}</strong></div>` : ""}
             </div>
 
             <div>
-              <h3 class="font-semibold mb-2">Sản phẩm</h3>
-              <div class="space-y-2">
-                ${order.items
-                  .map(
-                    (item) => `
-                      <div class="flex items-center justify-between text-sm border border-slate-100 rounded-lg p-2">
-                        <div>
-                          <p class="font-medium">${item.name}</p>
-                          <p class="text-xs text-slate-500">SL: ${item.quantity}</p>
-                        </div>
-                        <div class="font-semibold text-blue-700">${formatter.format(item.subtotal)}đ</div>
-                      </div>
-                    `
-                  )
-                  .join("")}
+              <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--clr-text-soft);margin-bottom:.5rem;">Sản phẩm đặt mua</div>
+              <div style="display:flex;flex-direction:column;gap:.35rem;">
+                ${order.items.map((item) => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:.82rem;padding:.42rem .65rem;border-radius:var(--radius-sm);background:var(--clr-bg);border:1px solid var(--clr-border);">
+                    <div><div style="font-weight:600;">${item.name}</div><div style="font-size:.72rem;color:var(--clr-muted);">SL: ${item.quantity}</div></div>
+                    <div style="font-weight:700;color:var(--clr-primary);">${formatter.format(item.subtotal)}đ</div>
+                  </div>
+                `).join("")}
               </div>
             </div>
 
-            <div>
-              <h3 class="font-semibold mb-2">Trạng thái đơn hàng</h3>
-              <ul class="space-y-1 text-sm text-slate-600">
-                ${order.statusHistory
-                  .map((item) => {
-                    const noteText = item.note ? ` • ${item.note}` : "";
-                    const label = statusLabelMap[item.status] || item.status;
-                    return `
-                      <li>
-                        <strong>${label}</strong>${noteText} (${formatDate(item.at)})
-                      </li>
-                    `;
-                  })
-                  .join("")}
-              </ul>
+            <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
+              ${nextStatusLabelMap[order.status] ? `<button data-action="advance" data-order-id="${order.id}" class="btn btn-outline btn-sm" type="button">${nextStatusLabelMap[order.status]}</button>` : ""}
+              ${order.canCancel || order.canRequestCancel ? `<button data-action="cancel" data-order-id="${order.id}" class="btn btn-danger btn-sm" type="button">${cancelLabel}</button>` : ""}
             </div>
-
-            ${
-              order.canCancel || order.canRequestCancel
-                ? `
-                  <button
-                    data-action="cancel"
-                    data-order-id="${order.id}"
-                    class="px-3 py-2 rounded-lg border border-red-500 text-red-600 text-sm hover:bg-red-50"
-                    type="button"
-                  >
-                    ${cancelLabel}
-                  </button>
-                `
-                : ""
-            }
           </div>
         </details>
       `;
@@ -137,17 +133,31 @@ function renderOrders(orders) {
 }
 
 ordersList.addEventListener("click", async (event) => {
-  const button = event.target.closest("button[data-action='cancel']");
+  const cancelBtn = event.target.closest("button[data-action='cancel']");
+  const advanceBtn = event.target.closest("button[data-action='advance']");
+  const button = cancelBtn || advanceBtn;
   if (!button) return;
+
   const orderId = button.dataset.orderId;
-  const response = await fetch(`/api/orders/${orderId}/cancel`, { method: "POST" });
+  let response;
+
+  if (cancelBtn) {
+    response = await fetch(`/api/orders/${orderId}/cancel`, { method: "POST" });
+  } else {
+    response = await fetch(`/api/orders/${orderId}/status`, { method: "PATCH" });
+  }
+
   const data = await response.json();
   if (!response.ok) {
-    ordersNotice.textContent = data.message || "Không thể hủy đơn";
+    ordersNotice.style.cssText = "background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;";
+    ordersNotice.textContent = data.message || "Cập nhật thất bại";
     ordersNotice.classList.remove("hidden");
     return;
   }
-  ordersNotice.textContent = "Cập nhật trạng thái đơn hàng thành công";
+  ordersNotice.style.cssText = "";
+  ordersNotice.textContent = cancelBtn
+    ? "Đã cập nhật trạng thái hủy đơn"
+    : `Đơn hàng chuyển sang: ${data.data?.statusLabel || "trạng thái mới"}`;
   ordersNotice.classList.remove("hidden");
   await loadOrders();
 });

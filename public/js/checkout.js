@@ -26,18 +26,18 @@ async function fetchMe() {
 
 function renderSummary(summary) {
   checkoutSummary.innerHTML = `
-    <div class="flex flex-col gap-2 text-sm">
-      <div class="flex items-center justify-between">
-        <span>Tạm tính</span>
+    <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.88rem;">
+      <div style="display:flex;justify-content:space-between;">
+        <span style="color:var(--clr-muted);">Tạm tính</span>
         <strong>${formatter.format(summary.subtotal)}đ</strong>
       </div>
-      <div class="flex items-center justify-between">
-        <span>Phí vận chuyển</span>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="color:var(--clr-muted);">Phí vận chuyển</span>
         <strong>${formatter.format(summary.shippingFee)}đ</strong>
       </div>
-      <div class="flex items-center justify-between text-base">
-        <span>Tổng cộng</span>
-        <strong class="text-blue-700">${formatter.format(summary.total)}đ</strong>
+      <div style="display:flex;justify-content:space-between;font-size:1rem;padding-top:.5rem;border-top:1px solid var(--clr-border);margin-top:.25rem;">
+        <span style="font-weight:700;">Tổng cộng</span>
+        <strong style="color:var(--clr-primary);font-size:1.15rem;">${formatter.format(summary.total)}đ</strong>
       </div>
     </div>
   `;
@@ -59,13 +59,13 @@ function renderCheckout(data) {
   checkoutItems.innerHTML = items
     .map(
       (item) => `
-        <div class="flex items-center gap-3 border border-slate-200 rounded-xl p-3">
-          <img src="${item.image}" alt="${item.name}" class="w-16 h-16 rounded-lg object-cover" />
-          <div class="flex-1">
-            <h3 class="font-semibold text-sm">${item.name}</h3>
-            <p class="text-xs text-slate-500">SL: ${item.quantity}</p>
+        <div class="cart-item">
+          <img src="${item.image}" alt="${item.name}" />
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div style="font-size:.75rem;color:var(--clr-muted);">SL: ${item.quantity}</div>
           </div>
-          <div class="text-sm font-semibold text-blue-700">${formatter.format(item.subtotal)}đ</div>
+          <div class="item-price">${formatter.format(item.subtotal)}đ</div>
         </div>
       `
     )
@@ -93,6 +93,7 @@ checkoutForm.addEventListener("submit", async (event) => {
     paymentMethod: "COD"
   };
 
+  placeOrderBtn.textContent = "⏳ Đang xử lý...";
   placeOrderBtn.setAttribute("disabled", "disabled");
   try {
     const response = await fetch("/api/orders", {
@@ -112,6 +113,7 @@ checkoutForm.addEventListener("submit", async (event) => {
     const code = data.data?.code || "";
     window.location.href = `/orders?created=${encodeURIComponent(code)}`;
   } finally {
+    placeOrderBtn.textContent = "✅ Xác nhận đặt hàng";
     placeOrderBtn.removeAttribute("disabled");
   }
 });

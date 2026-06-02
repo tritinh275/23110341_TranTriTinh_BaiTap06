@@ -3,112 +3,116 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="<%= product.name %> – SneakerHub, mua ngay với giá tốt nhất." />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="/public/css/custom.css" />
-    <title><%= product.name %> - Chi tiết sản phẩm</title>
+    <title><%= product.name %> – SneakerHub</title>
   </head>
-  <body class="bg-slate-100 text-slate-800">
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="/" class="text-xl font-bold text-blue-700">SneakerHub</a>
-        <div class="flex items-center gap-3 text-sm">
-          <a href="/cart" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">
-            Giỏ hàng
-            <span id="cartCount" class="ml-1 inline-flex items-center justify-center text-xs bg-blue-600 text-white rounded-full px-2">
-              0
-            </span>
+  <body>
+    <!-- ══ HEADER ══════════════════════════════════════ -->
+    <header class="site-header">
+      <div style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+        <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
+        <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+          <a href="/cart" class="nav-link" id="cartNavLink">
+            🛒 Giỏ hàng
+            <span id="cartCount" class="cart-badge">0</span>
           </a>
-          <a href="/orders" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">Đơn hàng</a>
-          <div class="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-            <%= user.fullName %> (thành viên)
-          </div>
-          <button
-            id="logoutBtn"
-            class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50"
-          >
-            Đăng xuất
-          </button>
-        </div>
+          <a href="/orders" class="nav-link">📦 Đơn hàng</a>
+          <span class="nav-user">👤 <strong><%= user.fullName %></strong></span>
+          <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">Đăng xuất</button>
+        </nav>
       </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-6 space-y-8">
-      <a href="/" class="text-sm text-blue-600 hover:underline">← Quay về trang chủ</a>
+    <!-- ══ MAIN ════════════════════════════════════════ -->
+    <main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:2rem;">
 
-      <section class="grid lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-2xl p-4 shadow-sm">
-          <div class="swiper productSwiper rounded-xl overflow-hidden">
+      <!-- Breadcrumb -->
+      <nav style="font-size:.82rem;color:var(--clr-muted);display:flex;align-items:center;gap:.4rem;">
+        <a href="/" style="color:var(--clr-primary-light);text-decoration:none;font-weight:500;">Trang chủ</a>
+        <span>/</span>
+        <span style="color:var(--clr-primary-light)"><%= product.category %></span>
+        <span>/</span>
+        <span style="color:var(--clr-text-soft);"><%= product.name %></span>
+      </nav>
+
+      <!-- Product section -->
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;align-items:start;" class="fade-up">
+        <!-- Swiper -->
+        <div class="panel" style="padding:1rem;min-width:0;">
+          <div class="swiper productSwiper" style="border-radius:var(--radius-md);overflow:hidden;">
             <div class="swiper-wrapper">
               <% product.images.forEach((image) => { %>
               <div class="swiper-slide">
-                <img src="<%= image %>" alt="<%= product.name %>" class="w-full h-[350px] object-cover" />
+                <img src="<%= image %>" alt="<%= product.name %>" style="width:100%;height:360px;object-fit:cover;display:block;" />
               </div>
               <% }) %>
             </div>
             <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-5 shadow-sm">
-          <span class="inline-flex text-xs bg-slate-100 px-2 py-1 rounded-full mb-2">
-            Danh mục: <strong class="ml-1"><%= product.category %></strong>
+        <!-- Info -->
+        <div class="panel">
+          <!-- Category tag -->
+          <span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;background:var(--clr-primary-faint);color:var(--clr-primary);border:1px solid var(--clr-border);padding:.2rem .65rem;border-radius:99px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.85rem;">
+            📁 <%= product.category %>
           </span>
-          <h1 class="text-2xl font-bold mb-2"><%= product.name %></h1>
-          <p class="text-slate-600 mb-4"><%= product.description %></p>
 
-          <div class="mb-4">
-            <span class="text-3xl font-bold text-blue-700"><%= product.price.toLocaleString("vi-VN") %>đ</span>
-            <span class="text-slate-400 line-through ml-2"><%= product.originalPrice.toLocaleString("vi-VN") %>đ</span>
+          <h1 style="font-size:1.6rem;font-weight:900;letter-spacing:-.4px;line-height:1.2;margin-bottom:.6rem;"><%= product.name %></h1>
+          <p style="font-size:.9rem;color:var(--clr-text-soft);line-height:1.65;margin-bottom:1.1rem;"><%= product.description %></p>
+
+          <!-- Price -->
+          <div style="display:flex;align-items:baseline;gap:.6rem;margin-bottom:1.1rem;">
+            <span style="font-size:2rem;font-weight:900;color:var(--clr-primary);letter-spacing:-.5px;"><%= product.price.toLocaleString("vi-VN") %>đ</span>
+            <span style="font-size:.9rem;color:var(--clr-muted);text-decoration:line-through;"><%= product.originalPrice.toLocaleString("vi-VN") %>đ</span>
+            <% const pct = Math.round((1 - product.price / product.originalPrice) * 100); %>
+            <span style="font-size:.72rem;font-weight:700;background:var(--clr-accent-light);color:var(--clr-accent);padding:.15rem .5rem;border-radius:99px;">-<%= pct %>%</span>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 text-sm mb-5">
-            <div class="bg-slate-50 rounded-lg px-3 py-2">Tồn kho: <strong><%= product.stock %></strong></div>
-            <div class="bg-slate-50 rounded-lg px-3 py-2">Đã bán: <strong><%= product.soldCount %></strong></div>
-            <div class="bg-slate-50 rounded-lg px-3 py-2">Đánh giá: <strong><%= product.rating %> ★</strong></div>
-            <div class="bg-slate-50 rounded-lg px-3 py-2">Khuyến mãi: <strong><%= product.promoLabel %></strong></div>
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem;margin-bottom:1.25rem;">
+            <div class="stat-chip"><span>Tồn kho</span><strong><%= product.stock %></strong></div>
+            <div class="stat-chip"><span>Đã bán</span><strong><%= product.soldCount %></strong></div>
+            <div class="stat-chip"><span>Đánh giá</span><strong><%= product.rating %> ★</strong></div>
+            <div class="stat-chip"><span>KM</span><strong><%= product.promoLabel %></strong></div>
           </div>
 
-          <div class="flex items-center gap-3">
-            <span class="text-sm font-medium">Số lượng:</span>
-            <div class="inline-flex items-center border rounded-lg overflow-hidden">
-              <button id="decreaseQty" class="px-3 py-2 hover:bg-slate-100" type="button">-</button>
-              <input id="qtyInput" class="w-14 text-center outline-none" value="1" />
-              <button id="increaseQty" class="px-3 py-2 hover:bg-slate-100" type="button">+</button>
+          <!-- Qty + CTA -->
+          <div style="display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;">
+            <span style="font-size:.85rem;font-weight:600;color:var(--clr-text-soft);">Số lượng:</span>
+            <div class="qty-stepper">
+              <button id="decreaseQty" class="qty-btn" type="button">−</button>
+              <input id="qtyInput" class="qty-input" value="1" min="1" max="<%= product.stock %>" />
+              <button id="increaseQty" class="qty-btn" type="button">＋</button>
             </div>
           </div>
 
-          <div class="mt-4 flex flex-wrap items-center gap-3">
-            <button
-              id="addToCartBtn"
-              class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700"
-              type="button"
-            >
-              Thêm vào giỏ hàng
-            </button>
-            <a
-              href="/cart"
-              class="px-4 py-2 rounded-lg border border-slate-300 hover:bg-slate-50 font-medium"
-            >
-              Xem giỏ hàng
-            </a>
+          <div style="display:flex;flex-wrap:wrap;gap:.6rem;">
+            <button id="addToCartBtn" class="btn btn-primary" type="button">🛒 Thêm vào giỏ</button>
+            <a href="/cart" class="btn btn-outline">Xem giỏ hàng</a>
           </div>
-          <p id="cartMessage" class="text-sm mt-2 hidden"></p>
+          <p id="cartMessage" class="hidden" style="margin-top:.6rem;font-size:.82rem;"></p>
         </div>
       </section>
 
+      <!-- Similar products -->
       <section>
-        <h2 class="text-xl font-semibold mb-3">Sản phẩm tương tự</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 class="section-title" style="margin-bottom:1rem;">Sản phẩm tương tự</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
           <% similarProducts.forEach((item) => { %>
-          <article class="bg-white rounded-xl overflow-hidden shadow-sm">
-            <img src="<%= item.images[0] %>" alt="<%= item.name %>" class="w-full h-40 object-cover" />
-            <div class="p-3">
-              <h3 class="font-semibold text-sm mb-1"><%= item.name %></h3>
-              <p class="text-blue-700 font-semibold mb-2"><%= item.price.toLocaleString("vi-VN") %>đ</p>
-              <a class="text-sm text-blue-600 hover:underline" href="/products/<%= item.id %>">Xem chi tiết</a>
+          <a class="product-card" href="/products/<%= item.id %>">
+            <img src="<%= item.images[0] %>" alt="<%= item.name %>" />
+            <div class="card-body">
+              <span class="card-name"><%= item.name %></span>
+              <span class="card-price"><%= item.price.toLocaleString("vi-VN") %>đ</span>
+              <span class="card-meta">★ <%= item.rating %> · <%= item.soldCount %> đã bán</span>
             </div>
-          </article>
+          </a>
           <% }) %>
         </div>
       </section>

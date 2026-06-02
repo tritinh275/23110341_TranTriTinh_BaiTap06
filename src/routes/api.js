@@ -620,4 +620,43 @@ apiRouter.post("/orders/:id/cancel", requireMemberApi, async (req, res, next) =>
   }
 });
 
+apiRouter.patch("/orders/:id/status", requireMemberApi, async (req, res, next) => {
+  try {
+    const userId = getUserId(req);
+    const order = await Order.findOne({ _id: req.params.id, userId });
+    if (!order) {
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+    }
+
+    const progression = {
+      [ORDER_STATUS.NEW]: ORDER_STATUS.CONFIRMED,
+      [ORDER_STATUS.CONFIRMED]: ORDER_STATUS.PREPARING,
+      [ORDER_STATUS.PREPARING]: ORDER_STATUS.SHIPPING,
+      [ORDER_STATUS.SHIPPING]: ORDER_STATUS.DELIVERED
+    };
+
+    const nextStatus = progression[order.status];
+    if (!nextStatus) {
+      return res.status(400).json({ message: "Đơn hàng không thể chuyển trạng thái tiếp theo" });
+    }
+
+    const noteMap = {
+      [ORDER_STATUS.CONFIRMED]: "Đơn hàng đã được xác nhận",
+      [ORDER_STATUS.PREPARING]: "Shop đang chuẩn bị hàng",
+      [ORDER_STATUS.SHIPPING]: "Đơn hàng đang được giao",
+      [ORDER_STATUS.DELIVERED]: "Giao hàng thành công"
+    };
+
+    const now = new Date();
+    order.status = nextStatus;
+    order.statusHistory.push({ status: nextStatus, note: noteMap[nextStatus], at: now });
+    await order.save();
+
+    return res.json({ data: buildOrderResponse(order, now) });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 module.exports = { apiRouter };
+

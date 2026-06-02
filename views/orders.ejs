@@ -3,45 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Theo dõi lịch sử và trạng thái đơn hàng tại SneakerHub." />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/public/css/custom.css" />
-    <title>Theo dõi đơn hàng</title>
+    <title>Đơn hàng của tôi – SneakerHub</title>
   </head>
-  <body class="bg-slate-100 text-slate-800">
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="/" class="text-xl font-bold text-blue-700">SneakerHub</a>
-        <div class="flex items-center gap-3 text-sm">
-          <a href="/cart" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">
-            Giỏ hàng
-            <span id="cartCount" class="ml-1 inline-flex items-center justify-center text-xs bg-blue-600 text-white rounded-full px-2">
-              0
-            </span>
+  <body>
+    <!-- ══ HEADER ══════════════════════════════════════ -->
+    <header class="site-header">
+      <div style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+        <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
+        <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+          <a href="/cart" class="nav-link" id="cartNavLink">
+            🛒 Giỏ hàng
+            <span id="cartCount" class="cart-badge">0</span>
           </a>
-          <a href="/orders" class="px-3 py-1.5 rounded-lg border border-blue-600 text-blue-600 bg-blue-50">
-            Đơn hàng
-          </a>
-          <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-            Xin chào, <strong><%= user.fullName %></strong>
-          </div>
-          <button
-            id="logoutBtn"
-            class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50"
-          >
-            Đăng xuất
-          </button>
-        </div>
+          <a href="/orders" class="nav-link active">📦 Đơn hàng</a>
+          <span class="nav-user">👤 <strong><%= user.fullName %></strong></span>
+          <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">Đăng xuất</button>
+        </nav>
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-      <section class="bg-white rounded-2xl p-5 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <h1 class="text-2xl font-bold">Theo dõi đơn hàng</h1>
-        </div>
-        <div id="ordersNotice" class="hidden mb-4 rounded-lg bg-green-50 text-green-700 px-4 py-2 text-sm"></div>
-        <div id="ordersList" class="space-y-4"></div>
-      </section>
+    <!-- ══ MAIN ════════════════════════════════════════ -->
+    <main style="max-width:900px;margin:0 auto;padding:1.5rem 1.25rem;">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
+        <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-.3px;">📦 Đơn hàng của tôi</h1>
+        <a href="/" class="btn btn-outline btn-sm">← Tiếp tục mua sắm</a>
+      </div>
+
+      <!-- Notice (e.g. order placed success) -->
+      <div id="ordersNotice" class="hidden" style="margin-bottom:1rem;background:var(--clr-primary-faint);color:var(--clr-primary-text);border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:.7rem 1rem;font-size:.85rem;font-weight:500;"></div>
+
+      <!-- Order list -->
+      <div id="ordersList" style="display:flex;flex-direction:column;gap:1rem;"></div>
     </main>
 
     <script src="/public/js/nav.js"></script>

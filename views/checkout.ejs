@@ -1,107 +1,118 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/public/css/custom.css" />
-    <title>Thanh toán đơn hàng</title>
-  </head>
-  <body class="bg-slate-100 text-slate-800">
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <a href="/" class="text-xl font-bold text-blue-700">SneakerHub</a>
-        <div class="flex items-center gap-3 text-sm">
-          <a href="/cart" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">
-            Giỏ hàng
-            <span id="cartCount" class="ml-1 inline-flex items-center justify-center text-xs bg-blue-600 text-white rounded-full px-2">
-              0
-            </span>
-          </a>
-          <a href="/orders" class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50">Đơn hàng</a>
-          <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-            Xin chào, <strong><%= user.fullName %></strong>
-          </div>
-          <button
-            id="logoutBtn"
-            class="px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50"
-          >
-            Đăng xuất
-          </button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Thanh toán đơn hàng tại SneakerHub." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/public/css/custom.css" />
+  <title>Thanh toán – SneakerHub</title>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div
+      style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
+      <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+        <a href="/cart" class="nav-link" id="cartNavLink">
+          🛒 Giỏ hàng
+          <span id="cartCount" class="cart-badge">0</span>
+        </a>
+        <a href="/orders" class="nav-link">📦 Đơn hàng</a>
+        <span class="nav-user">👤 <strong>
+            <%= user.fullName %>
+          </strong></span>
+        <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">Đăng xuất</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ══ MAIN ════════════════════════════════════════ -->
+  <main style="max-width:1000px;margin:0 auto;padding:1.5rem 1.25rem;">
+
+    <!-- Steps indicator -->
+    <div style="display:flex;align-items:center;gap:.5rem;font-size:.8rem;margin-bottom:1.5rem;color:var(--clr-muted);">
+      <span style="color:var(--clr-primary-light);font-weight:600;">1. Giỏ hàng</span>
+      <span>›</span>
+      <span style="color:var(--clr-primary);font-weight:700;border-bottom:2px solid var(--clr-primary);">2. Thanh
+        toán</span>
+      <span>›</span>
+      <span>3. Xác nhận</span>
+    </div>
+
+    <h1 style="font-size:1.5rem;font-weight:900;letter-spacing:-.3px;margin-bottom:1.25rem;">Thanh toán đơn hàng</h1>
+
+    <div id="checkoutEmpty" class="hidden" style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:3rem;margin-bottom:.75rem;">🛒</div>
+      <p style="color:var(--clr-muted);margin-bottom:1rem;">Giỏ hàng của bạn đang trống.</p>
+      <a href="/" class="btn btn-primary">Tiếp tục mua sắm</a>
+    </div>
+
+    <div id="checkoutContent" style="display:grid;grid-template-columns:1fr 1.1fr;gap:1.5rem;align-items:start;">
+      <!-- Order summary -->
+      <div class="panel">
+        <h2 style="font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;">
+          📋 Sản phẩm trong đơn
+        </h2>
+        <div id="checkoutItems"></div>
+        <div id="checkoutSummary" style="margin-top:1rem;padding-top:.85rem;border-top:1px solid var(--clr-border);">
         </div>
       </div>
-    </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-      <section class="bg-white rounded-2xl p-5 shadow-sm">
-        <h1 class="text-2xl font-bold mb-4">Thanh toán đơn hàng</h1>
-        <div id="checkoutEmpty" class="hidden text-slate-500">
-          Giỏ hàng đang trống. <a href="/" class="text-blue-600 hover:underline">Quay về trang chủ</a>
-        </div>
-        <div id="checkoutContent" class="grid lg:grid-cols-2 gap-6">
+      <!-- Form -->
+      <div class="panel">
+        <h2 style="font-size:1rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;">
+          📍 Thông tin nhận hàng
+        </h2>
+        <form id="checkoutForm" style="display:flex;flex-direction:column;gap:.85rem;">
           <div>
-            <h2 class="text-lg font-semibold mb-3">Sản phẩm trong đơn</h2>
-            <div id="checkoutItems" class="space-y-3"></div>
-            <div id="checkoutSummary" class="mt-4 border-t border-slate-200 pt-4"></div>
+            <label class="form-label" for="recipientName">Họ và tên</label>
+            <input id="recipientName" class="form-input" name="recipientName" required placeholder="Nguyễn Văn A" />
+          </div>
+          <div>
+            <label class="form-label" for="phone">Số điện thoại</label>
+            <input id="phone" class="form-input" name="phone" required placeholder="0901 234 567" />
+          </div>
+          <div>
+            <label class="form-label" for="address">Địa chỉ giao hàng</label>
+            <textarea id="address" class="form-textarea" name="address" rows="3" required
+              placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"></textarea>
+          </div>
+          <div>
+            <label class="form-label" for="note">Ghi chú (tuỳ chọn)</label>
+            <textarea id="note" class="form-textarea" name="note" rows="2"
+              placeholder="Ví dụ: giao giờ hành chính, gọi trước khi giao..."></textarea>
           </div>
 
+          <!-- Payment method -->
           <div>
-            <h2 class="text-lg font-semibold mb-3">Thông tin nhận hàng</h2>
-            <form id="checkoutForm" class="space-y-4">
+            <label class="form-label">Phương thức thanh toán</label>
+            <div class="pay-method">
+              <div class="pay-icon">💵</div>
               <div>
-                <label class="block text-sm font-medium mb-1">Họ và tên</label>
-                <input
-                  id="recipientName"
-                  name="recipientName"
-                  class="w-full border rounded-lg px-3 py-2"
-                  required
-                />
+                <div style="font-weight:700;">COD – Thanh toán khi nhận</div>
+                <div style="font-size:.75rem;opacity:.75;font-weight:400;">Kiểm tra hàng trước khi thanh toán</div>
               </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Số điện thoại</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  class="w-full border rounded-lg px-3 py-2"
-                  required
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Địa chỉ</label>
-                <textarea
-                  id="address"
-                  name="address"
-                  class="w-full border rounded-lg px-3 py-2"
-                  rows="3"
-                  required
-                ></textarea>
-              </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Ghi chú (tuỳ chọn)</label>
-                <textarea id="note" name="note" class="w-full border rounded-lg px-3 py-2" rows="2"></textarea>
-              </div>
-              <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                <p class="text-sm text-slate-600 mb-2">Phương thức thanh toán</p>
-                <label class="inline-flex items-center gap-2 text-sm font-medium">
-                  <input type="radio" checked disabled />
-                  COD (Thanh toán khi nhận hàng)
-                </label>
-              </div>
-              <p id="checkoutError" class="text-sm text-red-600 hidden"></p>
-              <button
-                id="placeOrderBtn"
-                class="w-full py-2.5 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700"
-                type="submit"
-              >
-                Đặt hàng COD
-              </button>
-            </form>
+            </div>
           </div>
-        </div>
-      </section>
-    </main>
 
-    <script src="/public/js/nav.js"></script>
-    <script src="/public/js/checkout.js"></script>
-  </body>
+          <p id="checkoutError" class="hidden"
+            style="font-size:.82rem;color:#dc2626;background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:.5rem .75rem;">
+          </p>
+
+          <button id="placeOrderBtn" class="btn btn-primary btn-full btn-lg" type="submit">
+            ✅ Xác nhận đặt hàng
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="/public/js/nav.js"></script>
+  <script src="/public/js/checkout.js"></script>
+</body>
+
 </html>

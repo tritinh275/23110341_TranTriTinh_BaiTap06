@@ -16,28 +16,29 @@ const mostViewedPage = document.getElementById("mostViewedPage");
 
 function productCard(item) {
   return `
-    <article class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      <img src="${item.images[0]}" alt="${item.name}" class="w-full h-44 object-cover" />
-      <div class="p-3">
-        <div class="text-xs text-slate-500 mb-1">${item.category}</div>
-        <h3 class="font-semibold mb-1">${item.name}</h3>
-        <div class="text-blue-700 font-bold">${formatter.format(item.price)}đ</div>
-        <div class="text-xs text-slate-500 mt-1">Tồn: ${item.stock} | Đã bán: ${item.soldCount}</div>
-        <a href="/products/${item.id}" class="inline-block mt-3 text-sm text-blue-600 hover:underline">Xem chi tiết</a>
+    <a class="product-card" href="/products/${item.id}">
+      <img src="${item.images[0]}" alt="${item.name}" />
+      <div class="card-body">
+        <span class="card-badge">${item.category}</span>
+        <span class="card-name">${item.name}</span>
+        <span class="card-price">${formatter.format(item.price)}đ</span>
+        <span class="card-original-price">${formatter.format(item.originalPrice)}đ</span>
+        <span class="card-meta">★ ${item.rating} · Còn ${item.stock}</span>
       </div>
-    </article>
+    </a>
   `;
 }
 
 function topCard(item, rank, mode) {
-  const metric = mode === "most-viewed" ? `Lượt xem: ${formatter.format(item.viewCount)}` : `Đã bán: ${item.soldCount}`;
+  const metric = mode === "most-viewed"
+    ? `👁 ${formatter.format(item.viewCount)} lượt xem`
+    : `📦 ${formatter.format(item.soldCount)} đã bán`;
   return `
-    <article class="border border-slate-200 rounded-lg p-3">
-      <p class="text-xs text-slate-500 mb-1">#${rank} • ${item.category}</p>
-      <h4 class="font-semibold mb-1">${item.name}</h4>
-      <p class="text-sm text-slate-600">${metric}</p>
-      <a href="/products/${item.id}" class="inline-block mt-2 text-sm text-blue-600 hover:underline">Xem chi tiết</a>
-    </article>
+    <a href="/products/${item.id}" style="display:flex;align-items:center;gap:.65rem;padding:.45rem .5rem;border-radius:8px;text-decoration:none;color:inherit;transition:background .15s;" onmouseover="this.style.background='var(--clr-bg)'" onmouseout="this.style.background='transparent'">
+      <span style="min-width:22px;height:22px;border-radius:50%;background:var(--clr-primary-faint);color:var(--clr-primary);font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${rank}</span>
+      <span style="flex:1;font-size:.82rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</span>
+      <span style="font-size:.72rem;color:var(--clr-muted);white-space:nowrap;">${metric}</span>
+    </a>
   `;
 }
 
@@ -45,7 +46,7 @@ function renderProducts(items) {
   resultCount.textContent = `${items.length} sản phẩm`;
   if (!items.length) {
     productList.innerHTML = `
-      <div class="col-span-full bg-white rounded-xl p-6 text-center text-slate-500">
+      <div style="grid-column:1/-1;background:var(--clr-surface);border-radius:var(--radius-lg);padding:2rem;text-align:center;color:var(--clr-muted);border:1px dashed var(--clr-border);">
         Không tìm thấy sản phẩm phù hợp bộ lọc.
       </div>
     `;
@@ -90,12 +91,10 @@ function setCategoryLoading(isLoading) {
 
 function setActiveCategoryButton(category) {
   if (!categoryTabs) return;
-  const buttons = categoryTabs.querySelectorAll(".category-tab");
+  const buttons = categoryTabs.querySelectorAll(".cat-tab");
   buttons.forEach((button) => {
     const isActive = button.dataset.category === category;
-    button.className = `category-tab px-3 py-1.5 rounded-full border text-sm ${
-      isActive ? "bg-blue-600 border-blue-600 text-white" : "bg-white border-slate-300 text-slate-700"
-    }`;
+    button.classList.toggle("active", isActive);
   });
 }
 
@@ -152,7 +151,7 @@ async function resetCategoryFeed(category) {
 
 if (categoryTabs) {
   categoryTabs.addEventListener("click", async (event) => {
-    const button = event.target.closest(".category-tab");
+    const button = event.target.closest(".cat-tab");
     if (!button) return;
     const category = button.dataset.category || "";
     if (!category || category === categoryState.activeCategory) return;
