@@ -61,56 +61,85 @@
           <div class="label">🎁 Khuyến mãi</div>
           <h3>Đang giảm giá</h3>
           <div class="highlight-list">
-            <% promotions.forEach((p) => { %>
-              <% const discountPercent = Math.round((1 - p.price / p.originalPrice) * 100); %>
-              <a href="/products/<%= p.id %>" class="highlight-item">
-                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
-                  <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);"><%= p.name %></span>
-                  <div style="display:flex;align-items:center;justify-content:space-between;gap:.35rem;flex-wrap:wrap;">
-                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);"><%= p.price.toLocaleString('vi-VN') %>đ</span>
-                    <span style="font-size:.72rem;color:var(--clr-muted);text-decoration:line-through;"><%= p.originalPrice.toLocaleString('vi-VN') %>đ</span>
-                    <span style="font-size:.68rem;font-weight:700;color:#b91c1c;background:#fee2e2;padding:1px 5px;border-radius:4px;white-space:nowrap;">-<%= discountPercent %>%</span>
+            <% promotions.forEach((p)=> { %>
+              <% const discountPercent=Math.round((1 - p.price / p.originalPrice) * 100); %>
+                <a href="/products/<%= p.id %>" class="highlight-item">
+                  <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>"
+                    style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);"
+                    loading="lazy" />
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
+                    <span
+                      style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);">
+                      <%= p.name %>
+                    </span>
+                    <div
+                      style="display:flex;align-items:center;justify-content:space-between;gap:.35rem;flex-wrap:wrap;">
+                      <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);">
+                        <%= p.price.toLocaleString('vi-VN') %>đ
+                      </span>
+                      <span style="font-size:.72rem;color:var(--clr-muted);text-decoration:line-through;">
+                        <%= p.originalPrice.toLocaleString('vi-VN') %>đ
+                      </span>
+                      <span
+                        style="font-size:.68rem;font-weight:700;color:#b91c1c;background:#fee2e2;padding:1px 5px;border-radius:4px;white-space:nowrap;">-
+                        <%= discountPercent %>%</span>
+                    </div>
                   </div>
-                </div>
-              </a>
-            <% }) %>
+                </a>
+                <% }) %>
           </div>
         </div>
         <div class="info-card">
           <div class="label">✨ Mới nhất</div>
           <h3>Vừa cập nhật</h3>
           <div class="highlight-list">
-            <% newest.forEach((p) => { %>
+            <% newest.forEach((p)=> { %>
               <a href="/products/<%= p.id %>" class="highlight-item">
-                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
+                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>"
+                  style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);"
+                  loading="lazy" />
                 <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
-                  <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);"><%= p.name %></span>
+                  <span
+                    style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);">
+                    <%= p.name %>
+                  </span>
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
-                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);"><%= p.price.toLocaleString('vi-VN') %>đ</span>
-                    <span style="font-size:.72rem;color:var(--clr-accent);font-weight:600;background:var(--clr-accent-light);padding:1px 5px;border-radius:4px;white-space:nowrap;">★ <%= p.rating %></span>
+                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);">
+                      <%= p.price.toLocaleString('vi-VN') %>đ
+                    </span>
+                    <span
+                      style="font-size:.72rem;color:var(--clr-accent);font-weight:600;background:var(--clr-accent-light);padding:1px 5px;border-radius:4px;white-space:nowrap;">★
+                      <%= p.rating %></span>
                   </div>
                 </div>
               </a>
-            <% }) %>
+              <% }) %>
           </div>
         </div>
         <div class="info-card">
           <div class="label">🏆 Bán chạy</div>
           <h3>Top xu hướng</h3>
           <div class="highlight-list">
-            <% bestSellers.forEach((p) => { %>
+            <% bestSellers.forEach((p)=> { %>
               <a href="/products/<%= p.id %>" class="highlight-item">
-                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
+                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>"
+                  style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);"
+                  loading="lazy" />
                 <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
-                  <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);"><%= p.name %></span>
+                  <span
+                    style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);">
+                    <%= p.name %>
+                  </span>
                   <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
-                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);"><%= p.price.toLocaleString('vi-VN') %>đ</span>
-                    <span style="font-size:.72rem;color:var(--clr-muted);white-space:nowrap;">Đã bán <%= p.soldCount %></span>
+                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);">
+                      <%= p.price.toLocaleString('vi-VN') %>đ
+                    </span>
+                    <span style="font-size:.72rem;color:var(--clr-muted);white-space:nowrap;">Đã bán <%= p.soldCount %>
+                        </span>
                   </div>
                 </div>
               </a>
-            <% }) %>
+              <% }) %>
           </div>
         </div>
       </div>
@@ -121,37 +150,42 @@
       <div
         style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
         <h2 class="section-title">Top 10 sản phẩm nổi bật</h2>
-        <span style="font-size:.78rem;color:var(--clr-muted);">Phân trang ngang theo từng nhóm</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;">
         <!-- Best selling -->
-        <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
-            <h3 style="font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:.4rem;">🥇 Top 10 bán chạy
-            </h3>
-            <div style="display:flex;align-items:center;gap:.35rem;">
-              <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="prev">←</button>
-              <span id="bestSellingPage"
-                style="font-size:.72rem;color:var(--clr-muted);min-width:36px;text-align:center;"></span>
-              <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="next">→</button>
+        <div style="display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1.25rem;background:var(--clr-surface);min-height:450px;">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;border-bottom:1px solid var(--clr-border);padding-bottom:.5rem;">
+              <h3 style="font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:.4rem;color:var(--clr-primary);">🥇 TOP 10 BÁN CHẠY</h3>
             </div>
+            <div id="bestSellingList" style="display:flex;flex-direction:column;gap:.6rem;"></div>
           </div>
-          <div id="bestSellingList" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+          <div style="margin-top:1.25rem;display:flex;align-items:center;justify-content:center;gap:1rem;border-top:1px dashed var(--clr-border);padding-top:1rem;">
+            <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="prev"
+              style="width:36px;height:36px;border-radius:8px;font-weight:bold;font-size:1rem;box-shadow:var(--shadow-sm);border-color:var(--clr-primary-light);color:var(--clr-primary);">←</button>
+            <span id="bestSellingPage"
+              style="font-size:.82rem;font-weight:800;color:var(--clr-primary);min-width:90px;text-align:center;background:var(--clr-primary-faint);padding:.35rem .75rem;border-radius:6px;border:1px solid var(--clr-border);"></span>
+            <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="next"
+              style="width:36px;height:36px;border-radius:8px;font-weight:bold;font-size:1rem;box-shadow:var(--shadow-sm);border-color:var(--clr-primary-light);color:var(--clr-primary);">→</button>
+          </div>
         </div>
 
         <!-- Most viewed -->
-        <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
-            <h3 style="font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:.4rem;">👁 Top 10 xem nhiều
-            </h3>
-            <div style="display:flex;align-items:center;gap:.35rem;">
-              <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="prev">←</button>
-              <span id="mostViewedPage"
-                style="font-size:.72rem;color:var(--clr-muted);min-width:36px;text-align:center;"></span>
-              <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="next">→</button>
+        <div style="display:flex;flex-direction:column;justify-content:space-between;border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1.25rem;background:var(--clr-surface);min-height:450px;">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;border-bottom:1px solid var(--clr-border);padding-bottom:.5rem;">
+              <h3 style="font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:.4rem;color:var(--clr-primary);">👁 TOP 10 XEM NHIỀU</h3>
             </div>
+            <div id="mostViewedList" style="display:flex;flex-direction:column;gap:.6rem;"></div>
           </div>
-          <div id="mostViewedList" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+          <div style="margin-top:1.25rem;display:flex;align-items:center;justify-content:center;gap:1rem;border-top:1px dashed var(--clr-border);padding-top:1rem;">
+            <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="prev"
+              style="width:36px;height:36px;border-radius:8px;font-weight:bold;font-size:1rem;box-shadow:var(--shadow-sm);border-color:var(--clr-primary-light);color:var(--clr-primary);">←</button>
+            <span id="mostViewedPage"
+              style="font-size:.82rem;font-weight:800;color:var(--clr-primary);min-width:90px;text-align:center;background:var(--clr-primary-faint);padding:.35rem .75rem;border-radius:6px;border:1px solid var(--clr-border);"></span>
+            <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="next"
+              style="width:36px;height:36px;border-radius:8px;font-weight:bold;font-size:1rem;box-shadow:var(--shadow-sm);border-color:var(--clr-primary-light);color:var(--clr-primary);">→</button>
+          </div>
         </div>
       </div>
     </section>

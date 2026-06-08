@@ -102,12 +102,15 @@
         </div>
 
         <!-- Stats -->
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem;margin-bottom:1.25rem;">
+        <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:.4rem;margin-bottom:1.25rem;">
           <div class="stat-chip"><span>Tồn kho</span><strong>
               <%= product.stock %>
             </strong></div>
           <div class="stat-chip"><span>Đã bán</span><strong>
               <%= product.soldCount %>
+            </strong></div>
+          <div class="stat-chip"><span>Lượt xem</span><strong>
+              <%= product.viewCount || 0 %>
             </strong></div>
           <div class="stat-chip"><span>Đánh giá</span><strong>
               <%= product.rating %> ★
