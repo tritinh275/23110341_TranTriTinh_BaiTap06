@@ -1,128 +1,165 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="<%= product.name %> – SneakerHub, mua ngay với giá tốt nhất." />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="/public/css/custom.css" />
-    <title><%= product.name %> – SneakerHub</title>
-  </head>
-  <body>
-    <!-- ══ HEADER ══════════════════════════════════════ -->
-    <header class="site-header">
-      <div style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
-        <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
-        <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
-          <a href="/cart" class="nav-link" id="cartNavLink">
-            🛒 Giỏ hàng
-            <span id="cartCount" class="cart-badge">0</span>
-          </a>
-          <a href="/orders" class="nav-link">📦 Đơn hàng</a>
-          <span class="nav-user">👤 <strong><%= user.fullName %></strong></span>
-          <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">Đăng xuất</button>
-        </nav>
-      </div>
-    </header>
 
-    <!-- ══ MAIN ════════════════════════════════════════ -->
-    <main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:2rem;">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="<%= product.name %> – SneakerHub, mua ngay với giá tốt nhất." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="/public/css/custom.css" />
+  <title>
+    <%= product.name %> – SneakerHub
+  </title>
+</head>
 
-      <!-- Breadcrumb -->
-      <nav style="font-size:.82rem;color:var(--clr-muted);display:flex;align-items:center;gap:.4rem;">
-        <a href="/" style="color:var(--clr-primary-light);text-decoration:none;font-weight:500;">Trang chủ</a>
-        <span>/</span>
-        <span style="color:var(--clr-primary-light)"><%= product.category %></span>
-        <span>/</span>
-        <span style="color:var(--clr-text-soft);"><%= product.name %></span>
+<body>
+  <!-- ══ HEADER ══════════════════════════════════════ -->
+  <header class="site-header">
+    <div
+      style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
+      <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+        <a href="/cart" class="nav-link" id="cartNavLink">
+          🛒 Giỏ hàng
+          <span id="cartCount" class="cart-badge">0</span>
+        </a>
+        <a href="/orders" class="nav-link">📦 Đơn hàng</a>
+        <span class="nav-user">👤 <strong>
+            <%= user.fullName %>
+          </strong></span>
+        <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">Đăng xuất</button>
       </nav>
+    </div>
+  </header>
 
-      <!-- Product section -->
-      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;align-items:start;" class="fade-up">
-        <!-- Swiper -->
-        <div class="panel" style="padding:1rem;min-width:0;">
-          <div class="swiper productSwiper" style="border-radius:var(--radius-md);overflow:hidden;">
-            <div class="swiper-wrapper">
-              <% product.images.forEach((image) => { %>
+  <!-- ══ MAIN ════════════════════════════════════════ -->
+  <main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:2rem;">
+
+    <!-- Breadcrumb -->
+    <nav style="font-size:.82rem;color:var(--clr-muted);display:flex;align-items:center;gap:.4rem;">
+      <a href="/" style="color:var(--clr-primary-light);text-decoration:none;font-weight:500;">Trang chủ</a>
+      <span>/</span>
+      <span style="color:var(--clr-primary-light)">
+        <%= product.category %>
+      </span>
+      <span>/</span>
+      <span style="color:var(--clr-text-soft);">
+        <%= product.name %>
+      </span>
+    </nav>
+
+    <!-- Product section -->
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;align-items:start;"
+      class="fade-up">
+      <!-- Swiper -->
+      <div class="panel" style="padding:1rem;min-width:0;">
+        <div class="swiper productSwiper" style="border-radius:var(--radius-md);overflow:hidden;">
+          <div class="swiper-wrapper">
+            <% product.images.forEach((image)=> { %>
               <div class="swiper-slide">
-                <img src="<%= image %>" alt="<%= product.name %>" style="width:100%;height:360px;object-fit:cover;display:block;" />
+                <img src="<%= image %>" alt="<%= product.name %>"
+                  style="width:100%;height:360px;object-fit:cover;display:block;" />
               </div>
               <% }) %>
-            </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
           </div>
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-button-next"></div>
         </div>
+      </div>
 
-        <!-- Info -->
-        <div class="panel">
-          <!-- Category tag -->
-          <span style="display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;background:var(--clr-primary-faint);color:var(--clr-primary);border:1px solid var(--clr-border);padding:.2rem .65rem;border-radius:99px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.85rem;">
-            📁 <%= product.category %>
+      <!-- Info -->
+      <div class="panel">
+        <!-- Category tag -->
+        <span
+          style="display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:600;background:var(--clr-primary-faint);color:var(--clr-primary);border:1px solid var(--clr-border);padding:.2rem .65rem;border-radius:99px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.85rem;">
+          📁 <%= product.category %>
+        </span>
+
+        <h1 style="font-size:1.6rem;font-weight:900;letter-spacing:-.4px;line-height:1.2;margin-bottom:.6rem;">
+          <%= product.name %>
+        </h1>
+        <p style="font-size:.9rem;color:var(--clr-text-soft);line-height:1.65;margin-bottom:1.1rem;">
+          <%= product.description %>
+        </p>
+
+        <!-- Price -->
+        <div style="display:flex;align-items:baseline;gap:.6rem;margin-bottom:1.1rem;">
+          <span style="font-size:2rem;font-weight:900;color:var(--clr-primary);letter-spacing:-.5px;">
+            <%= product.price.toLocaleString("vi-VN") %>đ
           </span>
-
-          <h1 style="font-size:1.6rem;font-weight:900;letter-spacing:-.4px;line-height:1.2;margin-bottom:.6rem;"><%= product.name %></h1>
-          <p style="font-size:.9rem;color:var(--clr-text-soft);line-height:1.65;margin-bottom:1.1rem;"><%= product.description %></p>
-
-          <!-- Price -->
-          <div style="display:flex;align-items:baseline;gap:.6rem;margin-bottom:1.1rem;">
-            <span style="font-size:2rem;font-weight:900;color:var(--clr-primary);letter-spacing:-.5px;"><%= product.price.toLocaleString("vi-VN") %>đ</span>
-            <span style="font-size:.9rem;color:var(--clr-muted);text-decoration:line-through;"><%= product.originalPrice.toLocaleString("vi-VN") %>đ</span>
-            <% const pct = Math.round((1 - product.price / product.originalPrice) * 100); %>
-            <span style="font-size:.72rem;font-weight:700;background:var(--clr-accent-light);color:var(--clr-accent);padding:.15rem .5rem;border-radius:99px;">-<%= pct %>%</span>
-          </div>
-
-          <!-- Stats -->
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem;margin-bottom:1.25rem;">
-            <div class="stat-chip"><span>Tồn kho</span><strong><%= product.stock %></strong></div>
-            <div class="stat-chip"><span>Đã bán</span><strong><%= product.soldCount %></strong></div>
-            <div class="stat-chip"><span>Đánh giá</span><strong><%= product.rating %> ★</strong></div>
-            <div class="stat-chip"><span>KM</span><strong><%= product.promoLabel %></strong></div>
-          </div>
-
-          <!-- Qty + CTA -->
-          <div style="display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;">
-            <span style="font-size:.85rem;font-weight:600;color:var(--clr-text-soft);">Số lượng:</span>
-            <div class="qty-stepper">
-              <button id="decreaseQty" class="qty-btn" type="button">−</button>
-              <input id="qtyInput" class="qty-input" value="1" min="1" max="<%= product.stock %>" />
-              <button id="increaseQty" class="qty-btn" type="button">＋</button>
-            </div>
-          </div>
-
-          <div style="display:flex;flex-wrap:wrap;gap:.6rem;">
-            <button id="addToCartBtn" class="btn btn-primary" type="button">🛒 Thêm vào giỏ</button>
-            <a href="/cart" class="btn btn-outline">Xem giỏ hàng</a>
-          </div>
-          <p id="cartMessage" class="hidden" style="margin-top:.6rem;font-size:.82rem;"></p>
+          <span style="font-size:.9rem;color:var(--clr-muted);text-decoration:line-through;">
+            <%= product.originalPrice.toLocaleString("vi-VN") %>đ
+          </span>
+          <% const pct=Math.round((1 - product.price / product.originalPrice) * 100); %>
+            <span
+              style="font-size:.72rem;font-weight:700;background:var(--clr-accent-light);color:var(--clr-accent);padding:.15rem .5rem;border-radius:99px;">-
+              <%= pct %>%</span>
         </div>
-      </section>
 
-      <!-- Similar products -->
-      <section>
-        <h2 class="section-title" style="margin-bottom:1rem;">Sản phẩm tương tự</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
-          <% similarProducts.forEach((item) => { %>
+        <!-- Stats -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.5rem;margin-bottom:1.25rem;">
+          <div class="stat-chip"><span>Tồn kho</span><strong>
+              <%= product.stock %>
+            </strong></div>
+          <div class="stat-chip"><span>Đã bán</span><strong>
+              <%= product.soldCount %>
+            </strong></div>
+          <div class="stat-chip"><span>Đánh giá</span><strong>
+              <%= product.rating %> ★
+            </strong></div>
+          <div class="stat-chip"><span>KM</span><strong>
+              <%= product.promoLabel %>
+            </strong></div>
+        </div>
+
+        <!-- Qty + CTA -->
+        <div style="display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;">
+          <span style="font-size:.85rem;font-weight:600;color:var(--clr-text-soft);">Số lượng:</span>
+          <div class="qty-stepper">
+            <button id="decreaseQty" class="qty-btn" type="button">−</button>
+            <input id="qtyInput" class="qty-input" value="1" min="1" max="<%= product.stock %>" />
+            <button id="increaseQty" class="qty-btn" type="button">＋</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:.6rem;">
+          <button id="addToCartBtn" class="btn btn-primary" type="button">🛒 Thêm vào giỏ</button>
+          <a href="/cart" class="btn btn-outline">Xem giỏ hàng</a>
+        </div>
+        <p id="cartMessage" class="hidden" style="margin-top:.6rem;font-size:.82rem;"></p>
+      </div>
+    </section>
+
+    <!-- Similar products -->
+    <section>
+      <h2 class="section-title" style="margin-bottom:1rem;">Sản phẩm tương tự</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
+        <% similarProducts.forEach((item)=> { %>
           <a class="product-card" href="/products/<%= item.id %>">
             <img src="<%= item.images[0] %>" alt="<%= item.name %>" />
             <div class="card-body">
-              <span class="card-name"><%= item.name %></span>
-              <span class="card-price"><%= item.price.toLocaleString("vi-VN") %>đ</span>
+              <span class="card-name">
+                <%= item.name %>
+              </span>
+              <span class="card-price">
+                <%= item.price.toLocaleString("vi-VN") %>đ
+              </span>
               <span class="card-meta">★ <%= item.rating %> · <%= item.soldCount %> đã bán</span>
             </div>
           </a>
           <% }) %>
-        </div>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <script>
-      window.__PRODUCT__ = <%- JSON.stringify(product) %>;
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="/public/js/nav.js"></script>
-    <script src="/public/js/detail.js"></script>
-  </body>
+  <script>
+    window.__PRODUCT__ = <%- JSON.stringify(product) %>;
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="/public/js/nav.js"></script>
+  <script src="/public/js/detail.js"></script>
+</body>
+
 </html>

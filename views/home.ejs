@@ -1,207 +1,231 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SneakerHub – Cửa hàng giày thể thao chính hãng: khuyến mãi, mới nhất, bán chạy." />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/public/css/custom.css" />
-    <title>SneakerHub – Trang chủ</title>
-  </head>
-  <body>
-    <!-- ══ HEADER ══════════════════════════════════════ -->
-    <header class="site-header">
-      <div style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
-        <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
 
-        <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
-          <a href="/cart" class="nav-link" id="cartNavLink">
-            🛒 Giỏ hàng
-            <span id="cartCount" class="cart-badge">0</span>
-          </a>
-          <a href="/orders" class="nav-link">📦 Đơn hàng</a>
-          <span class="nav-user">
-            👤 <strong><%= user.fullName %></strong>
-          </span>
-          <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">
-            Đăng xuất
-          </button>
-        </nav>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SneakerHub – Cửa hàng giày thể thao chính hãng: khuyến mãi, mới nhất, bán chạy." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/public/css/custom.css" />
+  <title>SneakerHub – Trang chủ</title>
+</head>
+
+<body>
+  <!-- ══ HEADER ══════════════════════════════════════ -->
+  <header class="site-header">
+    <div
+      style="max-width:1200px;margin:0 auto;padding:.75rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+      <a href="/" class="nav-logo">SneakerHub<span class="dot"></span></a>
+
+      <nav style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+        <a href="/cart" class="nav-link" id="cartNavLink">
+          🛒 Giỏ hàng
+          <span id="cartCount" class="cart-badge">0</span>
+        </a>
+        <a href="/orders" class="nav-link">📦 Đơn hàng</a>
+        <span class="nav-user">
+          👤 <strong>
+            <%= user.fullName %>
+          </strong>
+        </span>
+        <button id="logoutBtn" class="nav-link" style="background:transparent;cursor:pointer;">
+          Đăng xuất
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ══ MAIN ════════════════════════════════════════ -->
+  <main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:2rem;">
+
+    <!-- Hero / Promo -->
+    <section class="hero-banner fade-up">
+      <span class="hero-badge">🔥 Mùa hè 2025</span>
+      <h1>Khuyến mãi mùa hè<br />Giảm tới 30% toàn sộ shop</h1>
+      <p style="opacity:.85;font-size:.95rem;max-width:480px;line-height:1.65;">
+        Mua 2 đôi giảm thêm 5% · Miễn phí vận chuyển toàn quốc · Đổi trả 30 ngày.
+      </p>
+      <div style="margin-top:1.25rem;display:flex;gap:.6rem;flex-wrap:wrap;">
+        <a href="#categorySection" class="btn btn-sm"
+          style="background:#fff;color:var(--clr-primary);font-weight:700;">Xem sản phẩm</a>
+        <a href="#filterSection" class="btn btn-sm btn-outline"
+          style="border-color:rgba(255,255,255,.4);color:#fff;">Tìm kiếm &amp; lọc</a>
       </div>
-    </header>
+    </section>
 
-    <!-- ══ MAIN ════════════════════════════════════════ -->
-    <main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:2rem;">
-
-      <!-- Hero / Promo -->
-      <section class="hero-banner fade-up">
-        <span class="hero-badge">🔥 Mùa hè 2025</span>
-        <h1>Khuyến mãi mùa hè<br/>Giảm tới 30% toàn sộ shop</h1>
-        <p style="opacity:.85;font-size:.95rem;max-width:480px;line-height:1.65;">
-          Mua 2 đôi giảm thêm 5% · Miễn phí vận chuyển toàn quốc · Đổi trả 30 ngày.
-        </p>
-        <div style="margin-top:1.25rem;display:flex;gap:.6rem;flex-wrap:wrap;">
-          <a href="#categorySection" class="btn btn-sm" style="background:#fff;color:var(--clr-primary);font-weight:700;">Xem sản phẩm</a>
-          <a href="#filterSection" class="btn btn-sm btn-outline" style="border-color:rgba(255,255,255,.4);color:#fff;">Tìm kiếm &amp; lọc</a>
+    <!-- Highlight cards -->
+    <section>
+      <h2 class="section-title" style="margin-bottom:.85rem;">Thông tin nổi bật</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.85rem;">
+        <div class="info-card">
+          <div class="label">🎁 Khuyến mãi</div>
+          <h3>Đang giảm giá</h3>
+          <p class="content">
+            <%= promotions.map((p)=> p.name).join(", ") %>
+          </p>
         </div>
-      </section>
-
-      <!-- Highlight cards -->
-      <section>
-        <h2 class="section-title" style="margin-bottom:.85rem;">Thông tin nổi bật</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.85rem;">
-          <div class="info-card">
-            <div class="label">🎁 Khuyến mãi</div>
-            <h3>Đang giảm giá</h3>
-            <p class="content"><%= promotions.map((p) => p.name).join(", ") %></p>
-          </div>
-          <div class="info-card">
-            <div class="label">✨ Mới nhất</div>
-            <h3>Vừa cập nhật</h3>
-            <p class="content"><%= newest.map((p) => p.name).join(", ") %></p>
-          </div>
-          <div class="info-card">
-            <div class="label">🏆 Bán chạy</div>
-            <h3>Top xu hướng</h3>
-            <p class="content"><%= bestSellers.map((p) => p.name).join(", ") %></p>
-          </div>
+        <div class="info-card">
+          <div class="label">✨ Mới nhất</div>
+          <h3>Vừa cập nhật</h3>
+          <p class="content">
+            <%= newest.map((p)=> p.name).join(", ") %>
+          </p>
         </div>
-      </section>
-
-      <!-- Top 10 lists -->
-      <section class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
-          <h2 class="section-title">Top 10 sản phẩm nổi bật</h2>
-          <span style="font-size:.78rem;color:var(--clr-muted);">Phân trang ngang theo từng nhóm</span>
+        <div class="info-card">
+          <div class="label">🏆 Bán chạy</div>
+          <h3>Top xu hướng</h3>
+          <p class="content">
+            <%= bestSellers.map((p)=> p.name).join(", ") %>
+          </p>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
-          <!-- Best selling -->
-          <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
-              <h3 style="font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:.4rem;">🥇 Top 10 bán chạy</h3>
-              <div style="display:flex;align-items:center;gap:.35rem;">
-                <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="prev">←</button>
-                <span id="bestSellingPage" style="font-size:.72rem;color:var(--clr-muted);min-width:36px;text-align:center;"></span>
-                <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="next">→</button>
-              </div>
+      </div>
+    </section>
+
+    <!-- Top 10 lists -->
+    <section class="panel">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem;">
+        <h2 class="section-title">Top 10 sản phẩm nổi bật</h2>
+        <span style="font-size:.78rem;color:var(--clr-muted);">Phân trang ngang theo từng nhóm</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+        <!-- Best selling -->
+        <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
+            <h3 style="font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:.4rem;">🥇 Top 10 bán chạy
+            </h3>
+            <div style="display:flex;align-items:center;gap:.35rem;">
+              <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="prev">←</button>
+              <span id="bestSellingPage"
+                style="font-size:.72rem;color:var(--clr-muted);min-width:36px;text-align:center;"></span>
+              <button type="button" class="top-nav-btn" data-top-type="best-selling" data-top-action="next">→</button>
             </div>
-            <div id="bestSellingList" style="display:flex;flex-direction:column;gap:.5rem;"></div>
           </div>
+          <div id="bestSellingList" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+        </div>
 
-          <!-- Most viewed -->
-          <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
-              <h3 style="font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:.4rem;">👁 Top 10 xem nhiều</h3>
-              <div style="display:flex;align-items:center;gap:.35rem;">
-                <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="prev">←</button>
-                <span id="mostViewedPage" style="font-size:.72rem;color:var(--clr-muted);min-width:36px;text-align:center;"></span>
-                <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="next">→</button>
-              </div>
+        <!-- Most viewed -->
+        <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
+            <h3 style="font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:.4rem;">👁 Top 10 xem nhiều
+            </h3>
+            <div style="display:flex;align-items:center;gap:.35rem;">
+              <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="prev">←</button>
+              <span id="mostViewedPage"
+                style="font-size:.72rem;color:var(--clr-muted);min-width:36px;text-align:center;"></span>
+              <button type="button" class="top-nav-btn" data-top-type="most-viewed" data-top-action="next">→</button>
             </div>
-            <div id="mostViewedList" style="display:flex;flex-direction:column;gap:.5rem;"></div>
           </div>
+          <div id="mostViewedList" style="display:flex;flex-direction:column;gap:.5rem;"></div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Category + lazy loading -->
-      <section class="panel" id="categorySection">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
-          <h2 class="section-title">Sản phẩm theo danh mục</h2>
-          <span id="categoryResultCount" style="font-size:.8rem;color:var(--clr-muted);"></span>
-        </div>
-        <div id="categoryTabs" style="display:flex;flex-wrap:nowrap;gap:.5rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:1rem;">
-          <% categories.forEach((category, index) => { %>
-          <button
-            type="button"
-            class="cat-tab <%= index === 0 ? 'active' : '' %>"
-            data-category="<%= category %>"
-          >
+    <!-- Category + lazy loading -->
+    <section class="panel" id="categorySection">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+        <h2 class="section-title">Sản phẩm theo danh mục</h2>
+        <span id="categoryResultCount" style="font-size:.8rem;color:var(--clr-muted);"></span>
+      </div>
+      <div id="categoryTabs"
+        style="display:flex;flex-wrap:nowrap;gap:.5rem;overflow-x:auto;padding-bottom:.5rem;margin-bottom:1rem;">
+        <% categories.forEach((category, index)=> { %>
+          <button type="button" class="cat-tab <%= index === 0 ? 'active' : '' %>" data-category="<%= category %>">
             <%= category %>
           </button>
           <% }) %>
-        </div>
-        <div id="categoryProductList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;"></div>
-        <p id="categoryLoading" style="text-align:center;font-size:.82rem;color:var(--clr-muted);margin-top:1rem;display:none;">
-          ⏳ Đang tải thêm sản phẩm...
-        </p>
-        <div id="categorySentinel" style="height:8px;"></div>
-      </section>
+      </div>
+      <div id="categoryProductList"
+        style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;"></div>
+      <p id="categoryLoading"
+        style="text-align:center;font-size:.82rem;color:var(--clr-muted);margin-top:1rem;display:none;">
+        ⏳ Đang tải thêm sản phẩm...
+      </p>
+      <div id="categorySentinel" style="height:8px;"></div>
+    </section>
 
-      <!-- Search & filter -->
-      <section class="panel" id="filterSection">
-        <h2 class="section-title" style="margin-bottom:1rem;">Tìm kiếm &amp; lọc sản phẩm</h2>
-        <form id="filterForm" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.65rem;align-items:end;">
-          <div style="grid-column:1/-1;">
-            <label class="form-label">Từ khoá</label>
-            <input class="form-input" name="q" placeholder="Tên sản phẩm, danh mục..." />
-          </div>
-          <div>
-            <label class="form-label">Danh mục</label>
-            <select class="form-select" name="category">
-              <option value="">Tất cả</option>
-              <% categories.forEach((category) => { %>
-              <option value="<%= category %>"><%= category %></option>
+    <!-- Search & filter -->
+    <section class="panel" id="filterSection">
+      <h2 class="section-title" style="margin-bottom:1rem;">Tìm kiếm &amp; lọc sản phẩm</h2>
+      <form id="filterForm"
+        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.65rem;align-items:end;">
+        <div style="grid-column:1/-1;">
+          <label class="form-label">Từ khoá</label>
+          <input class="form-input" name="q" placeholder="Tên sản phẩm, danh mục..." />
+        </div>
+        <div>
+          <label class="form-label">Danh mục</label>
+          <select class="form-select" name="category">
+            <option value="">Tất cả</option>
+            <% categories.forEach((category)=> { %>
+              <option value="<%= category %>">
+                <%= category %>
+              </option>
               <% }) %>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Giá từ (đ)</label>
-            <input class="form-input" name="minPrice" type="number" placeholder="0" />
-          </div>
-          <div>
-            <label class="form-label">Giá đến (đ)</label>
-            <input class="form-input" name="maxPrice" type="number" placeholder="∞" />
-          </div>
-          <div>
-            <label class="form-label">Đánh giá tối thiểu</label>
-            <select class="form-select" name="minRating">
-              <option value="">Tất cả</option>
-              <option value="4">4 ★ trở lên</option>
-              <option value="4.5">4.5 ★ trở lên</option>
-              <option value="4.8">4.8 ★ trở lên</option>
-            </select>
-          </div>
-          <div>
-            <label class="form-label">Sắp xếp</label>
-            <select class="form-select" name="sort">
-              <option value="newest">Mới nhất</option>
-              <option value="best-seller">Bán chạy</option>
-              <option value="price-asc">Giá tăng dần</option>
-              <option value="price-desc">Giá giảm dần</option>
-            </select>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:.45rem;">
-            <label style="display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;">
-              <input type="checkbox" name="onlyInStock" value="true" /> Còn hàng
-            </label>
-            <label style="display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;">
-              <input type="checkbox" name="isNew" value="true" /> Sản phẩm mới
-            </label>
-            <label style="display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;">
-              <input type="checkbox" name="bestSeller" value="true" /> Chỉ bán chạy
-            </label>
-          </div>
-          <div style="display:flex;align-items:flex-end;">
-            <button class="btn btn-primary btn-full" type="submit">🔍 Áp dụng lọc</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- Product list (filter results) -->
-      <section>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
-          <h2 class="section-title">Danh sách sản phẩm</h2>
-          <p id="resultCount" style="font-size:.8rem;color:var(--clr-muted);"></p>
+          </select>
         </div>
-        <div id="productList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;"></div>
-      </section>
-    </main>
+        <div>
+          <label class="form-label">Giá từ (đ)</label>
+          <input class="form-input" name="minPrice" type="number" placeholder="0" />
+        </div>
+        <div>
+          <label class="form-label">Giá đến (đ)</label>
+          <input class="form-input" name="maxPrice" type="number" placeholder="∞" />
+        </div>
+        <div>
+          <label class="form-label">Đánh giá tối thiểu</label>
+          <select class="form-select" name="minRating">
+            <option value="">Tất cả</option>
+            <option value="4">4 ★ trở lên</option>
+            <option value="4.5">4.5 ★ trở lên</option>
+            <option value="4.8">4.8 ★ trở lên</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Sắp xếp</label>
+          <select class="form-select" name="sort">
+            <option value="newest">Mới nhất</option>
+            <option value="best-seller">Bán chạy</option>
+            <option value="price-asc">Giá tăng dần</option>
+            <option value="price-desc">Giá giảm dần</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.45rem;">
+          <label style="display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;">
+            <input type="checkbox" name="onlyInStock" value="true" /> Còn hàng
+          </label>
+          <label style="display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;">
+            <input type="checkbox" name="isNew" value="true" /> Sản phẩm mới
+          </label>
+          <label style="display:flex;align-items:center;gap:.45rem;font-size:.82rem;cursor:pointer;">
+            <input type="checkbox" name="bestSeller" value="true" /> Chỉ bán chạy
+          </label>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-primary btn-full" type="submit">🔍 Áp dụng lọc</button>
+        </div>
+      </form>
+    </section>
 
-    <script>
-      window.__PRODUCTS__ = <%- JSON.stringify(products) %>;
-      window.__CATEGORIES__ = <%- JSON.stringify(categories) %>;
-    </script>
-    <script src="/public/js/nav.js"></script>
-    <script src="/public/js/home.js"></script>
-  </body>
+    <!-- Product list (filter results) -->
+    <section>
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+        <h2 class="section-title">Danh sách sản phẩm</h2>
+        <p id="resultCount" style="font-size:.8rem;color:var(--clr-muted);"></p>
+      </div>
+      <div id="productList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
+      </div>
+    </section>
+  </main>
+
+  <script>
+    window.__PRODUCTS__ = <%- JSON.stringify(products) %>;
+    window.__CATEGORIES__ = <%- JSON.stringify(categories) %>;
+  </script>
+  <script src="/public/js/nav.js"></script>
+  <script src="/public/js/home.js"></script>
+</body>
+
 </html>

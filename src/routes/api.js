@@ -1,4 +1,5 @@
 const express = require("express");
+const bcrypt = require("bcryptjs");
 const { Product } = require("../models/Product");
 const { User } = require("../models/User");
 const { Cart } = require("../models/Cart");
@@ -223,12 +224,83 @@ async function buildCartPayload(cart) {
   return { items, summary };
 }
 
+apiRouter.post("/auth/register", async (req, res, next) => {
+  try {
+    const { fullName, username, password, confirmPassword } = req.body;
+
+    if (!fullName || !username || !password || !confirmPassword) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin" });
+    }
+
+    const trimmedFullName = String(fullName).trim();
+    const trimmedUsername = String(username).trim();
+
+    if (trimmedFullName.length < 2 || trimmedFullName.length > 50) {
+      return res.status(400).json({ message: "Họ và tên phải từ 2 đến 50 ký tự" });
+    }
+
+    if (trimmedUsername.length < 3 || trimmedUsername.length > 20) {
+      return res.status(400).json({ message: "Tên đăng nhập phải từ 3 đến 20 ký tự" });
+    }
+
+    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    if (!usernameRegex.test(trimmedUsername)) {
+      return res.status(400).json({ message: "Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Mật khẩu phải chứa ít nhất 6 ký tự" });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Mật khẩu xác nhận không khớp" });
+    }
+
+    const existingUser = await User.findOne({ username: { $regex: new RegExp(`^${trimmedUsername}$`, "i") } }).lean();
+    if (existingUser) {
+      return res.status(400).json({ message: "Tên đăng nhập đã tồn tại" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      username: trimmedUsername,
+      password: hashedPassword,
+      fullName: trimmedFullName,
+      role: "member"
+    });
+
+    const token = signMemberToken(newUser);
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 8 * 60 * 60 * 1000
+    });
+
+    return res.status(201).json({
+      message: "Đăng ký thành công",
+      user: { username: newUser.username, fullName: newUser.fullName, role: newUser.role }
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 apiRouter.post("/auth/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username, password }).lean();
+    if (!username || !password) {
+      return res.status(400).json({ message: "Vui lòng nhập tên đăng nhập và mật khẩu" });
+    }
+
+    const user = await User.findOne({ username: String(username).trim() }).lean();
 
     if (!user || user.role !== "member") {
+      return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
     }
 

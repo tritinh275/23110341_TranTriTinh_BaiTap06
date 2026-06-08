@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SneakerHub – Đăng ký thành viên để nhận ưu đãi mua sắm giày thể thao." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/public/css/custom.css" />
+  <title>Đăng ký thành viên</title>
+</head>
+
+<body>
+  <div class="login-wrapper">
+    <!-- Brand side -->
+    <div class="login-brand">
+      <div style="position:relative;z-index:1">
+        <div style="font-size:2rem;margin-bottom:1.5rem;">👟</div>
+        <div
+          style="font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:.5rem;">
+          SneakerHub</div>
+        <h2>Giày đỉnh —<br />phong cách thật.</h2>
+        <p style="margin-top:.75rem;">Hàng nghìn mẫu giày thể thao chính hãng, giao hàng toàn quốc, hoàn tiền 30 ngày.
+        </p>
+        <div style="margin-top:2rem;display:flex;flex-direction:column;gap:.6rem;">
+          <div style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;opacity:.8;">
+            <span style="font-size:1rem;">✅</span> Miễn phí vận chuyển đơn từ 500k
+          </div>
+          <div style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;opacity:.8;">
+            <span style="font-size:1rem;">✅</span> Đổi trả dễ dàng trong 30 ngày
+          </div>
+          <div style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;opacity:.8;">
+            <span style="font-size:1rem;">✅</span> Hàng chính hãng 100%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form side -->
+    <div class="login-form-side">
+      <div class="login-box fade-up">
+        <a href="/" class="nav-logo" style="font-size:1.1rem;margin-bottom:1.5rem;display:inline-flex;">
+          SneakerHub<span class="dot"></span>
+        </a>
+        <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:.25rem;letter-spacing:-.3px;">Đăng ký thành viên</h1>
+        <p style="font-size:.85rem;color:var(--clr-muted);margin-bottom:1.25rem;">Tạo tài khoản mới và bắt đầu mua sắm.</p>
+
+        <form id="registerForm" style="display:flex;flex-direction:column;gap:0.85rem;">
+          <div>
+            <label class="form-label" for="fullName">Họ và tên</label>
+            <input id="fullName" class="form-input" name="fullName" required
+              placeholder="Nhập họ và tên của bạn" />
+          </div>
+          <div>
+            <label class="form-label" for="username">Tên đăng nhập</label>
+            <input id="username" class="form-input" name="username" required autocomplete="username"
+              placeholder="Chỉ dùng chữ cái, số, gạch dưới (3-20 ký tự)" />
+          </div>
+          <div>
+            <label class="form-label" for="password">Mật khẩu</label>
+            <input id="password" class="form-input" name="password" type="password" required autocomplete="new-password"
+              placeholder="Tối thiểu 6 ký tự" />
+          </div>
+          <div>
+            <label class="form-label" for="confirmPassword">Xác nhận mật khẩu</label>
+            <input id="confirmPassword" class="form-input" name="confirmPassword" type="password" required autocomplete="new-password"
+              placeholder="••••••••" />
+          </div>
+          <button id="registerBtn" class="btn btn-primary btn-full btn-lg" type="submit" style="margin-top:.25rem;">
+            Đăng ký
+          </button>
+        </form>
+
+        <p id="errorText" class="hidden"
+          style="margin-top:.85rem;font-size:.82rem;color:#dc2626;background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:.5rem .75rem;">
+        </p>
+
+        <div style="margin-top:1.25rem;text-align:center;font-size:.85rem;color:var(--clr-muted);">
+          Đã có tài khoản? <a href="/login" style="color:var(--clr-primary);font-weight:600;text-decoration:underline;">Đăng nhập ngay</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const errorText = document.getElementById("errorText");
+    const registerBtn = document.getElementById("registerBtn");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorText.classList.add("hidden");
+      
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+
+      // Client-side validations
+      const fullName = (payload.fullName || '').trim();
+      const username = (payload.username || '').trim();
+      const password = payload.password || '';
+      const confirmPassword = payload.confirmPassword || '';
+
+      if (fullName.length < 2 || fullName.length > 50) {
+        showError("Họ và tên phải từ 2 đến 50 ký tự");
+        return;
+      }
+
+      if (username.length < 3 || username.length > 20) {
+        showError("Tên đăng nhập phải từ 3 đến 20 ký tự");
+        return;
+      }
+
+      const usernameRegex = /^[a-zA-Z0-9_]+$/;
+      if (!usernameRegex.test(username)) {
+        showError("Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới");
+        return;
+      }
+
+      if (password.length < 6) {
+        showError("Mật khẩu phải chứa ít nhất 6 ký tự");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showError("Mật khẩu xác nhận không khớp");
+        return;
+      }
+
+      registerBtn.textContent = "Đang xử lý...";
+      registerBtn.disabled = true;
+
+      try {
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            fullName,
+            username,
+            password,
+            confirmPassword
+          })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          showError(data.message || "Đăng ký thất bại");
+          registerBtn.textContent = "Đăng ký";
+          registerBtn.disabled = false;
+          return;
+        }
+
+        // Successfully registered and logged in, redirect to home page
+        window.location.href = "/";
+      } catch (error) {
+        showError("Có lỗi kết nối mạng xảy ra. Vui lòng thử lại sau.");
+        registerBtn.textContent = "Đăng ký";
+        registerBtn.disabled = false;
+      }
+    });
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorText.classList.remove("hidden");
+    }
+  </script>
+</body>
+
+</html>

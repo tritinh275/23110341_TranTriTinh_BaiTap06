@@ -18,6 +18,19 @@ pageRouter.get("/login", (req, res) => {
   return res.render("login");
 });
 
+pageRouter.get("/register", (req, res) => {
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      const payload = verifyToken(token);
+      if (payload.role === "member") return res.redirect("/");
+    } catch (error) {
+      res.clearCookie("token");
+    }
+  }
+  return res.render("register");
+});
+
 pageRouter.get("/", requireMember, async (req, res, next) => {
   try {
     const [categories, products, promotions, newest, bestSellers] = await Promise.all([

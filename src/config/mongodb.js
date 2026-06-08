@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const { Product } = require("../models/Product");
 const { User } = require("../models/User");
 const { PRODUCTS } = require("../data/products");
@@ -21,12 +22,13 @@ async function seedDatabaseIfEmpty() {
     }))
   );
 
+  const hashedPassword = await bcrypt.hash("123456", 10);
   await User.updateOne(
     { username: "user" },
     {
       $set: {
         username: "user",
-        password: "123456",
+        password: hashedPassword,
         fullName: "Tran Tri Tinh",
         role: "member"
       }
