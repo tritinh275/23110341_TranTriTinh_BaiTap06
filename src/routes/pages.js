@@ -1,5 +1,5 @@
 const express = require("express");
-const { Product } = require("../models/Product");
+const productService = require("../services/productService");
 const { requireMember } = require("../middleware/auth");
 const { verifyToken } = require("../utils/jwt");
 
@@ -48,26 +48,17 @@ pageRouter.get("/verify-otp", (req, res) => {
 pageRouter.get("/", requireMember, async (req, res, next) => {
   try {
     const limit = 8;
-    const [categories, products, productsCount, promotions, newest, bestSellers] = await Promise.all([
-      Product.distinct("category"),
-      Product.find({}).sort({ createdAt: -1 }).limit(limit).lean(),
-      Product.countDocuments({}),
-      Product.find({ $expr: { $gt: ["$originalPrice", "$price"] } }).limit(4).lean(),
-      Product.find({}).sort({ createdAt: -1 }).limit(4).lean(),
-      Product.find({}).sort({ soldCount: -1 }).limit(4).lean()
-    ]);
-
-    categories.sort((a, b) => a.localeCompare(b));
+    const data = await productService.getHomeData(limit);
 
     return res.render("home", {
       user: req.user,
-      categories,
-      products,
-      productsCount,
+      categories: data.categories,
+      products: data.products,
+      productsCount: data.productsCount,
       productsLimit: limit,
-      promotions,
-      newest,
-      bestSellers
+      promotions: data.promotions,
+      newest: data.newest,
+      bestSellers: data.bestSellers
     });
   } catch (error) {
     return next(error);
@@ -77,26 +68,13 @@ pageRouter.get("/", requireMember, async (req, res, next) => {
 pageRouter.get("/products/:idOrSlug", requireMember, async (req, res, next) => {
   try {
     const idOrSlug = req.params.idOrSlug;
-    const byId = Number(idOrSlug);
-    const filter = Number.isNaN(byId)
-      ? { slug: idOrSlug }
-      : { $or: [{ id: byId }, { slug: idOrSlug }] };
-    const product = await Product.findOneAndUpdate(
-      filter,
-      { $inc: { viewCount: 1 } },
-      { new: true, lean: true }
-    );
+    const product = await productService.getProductByIdOrSlug(idOrSlug);
 
     if (!product) {
       return res.status(404).render("not-found");
     }
 
-    const similarProducts = await Product.find({
-      id: { $ne: product.id },
-      category: product.category
-    })
-      .limit(4)
-      .lean();
+    const similarProducts = await productService.getSimilarProducts(product, 4);
 
     return res.render("detail", {
       user: req.user,

@@ -60,23 +60,58 @@
         <div class="info-card">
           <div class="label">🎁 Khuyến mãi</div>
           <h3>Đang giảm giá</h3>
-          <p class="content">
-            <%= promotions.map((p)=> p.name).join(", ") %>
-          </p>
+          <div class="highlight-list">
+            <% promotions.forEach((p) => { %>
+              <% const discountPercent = Math.round((1 - p.price / p.originalPrice) * 100); %>
+              <a href="/products/<%= p.id %>" class="highlight-item">
+                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
+                  <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);"><%= p.name %></span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:.35rem;flex-wrap:wrap;">
+                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);"><%= p.price.toLocaleString('vi-VN') %>đ</span>
+                    <span style="font-size:.72rem;color:var(--clr-muted);text-decoration:line-through;"><%= p.originalPrice.toLocaleString('vi-VN') %>đ</span>
+                    <span style="font-size:.68rem;font-weight:700;color:#b91c1c;background:#fee2e2;padding:1px 5px;border-radius:4px;white-space:nowrap;">-<%= discountPercent %>%</span>
+                  </div>
+                </div>
+              </a>
+            <% }) %>
+          </div>
         </div>
         <div class="info-card">
           <div class="label">✨ Mới nhất</div>
           <h3>Vừa cập nhật</h3>
-          <p class="content">
-            <%= newest.map((p)=> p.name).join(", ") %>
-          </p>
+          <div class="highlight-list">
+            <% newest.forEach((p) => { %>
+              <a href="/products/<%= p.id %>" class="highlight-item">
+                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
+                  <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);"><%= p.name %></span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);"><%= p.price.toLocaleString('vi-VN') %>đ</span>
+                    <span style="font-size:.72rem;color:var(--clr-accent);font-weight:600;background:var(--clr-accent-light);padding:1px 5px;border-radius:4px;white-space:nowrap;">★ <%= p.rating %></span>
+                  </div>
+                </div>
+              </a>
+            <% }) %>
+          </div>
         </div>
         <div class="info-card">
           <div class="label">🏆 Bán chạy</div>
           <h3>Top xu hướng</h3>
-          <p class="content">
-            <%= bestSellers.map((p)=> p.name).join(", ") %>
-          </p>
+          <div class="highlight-list">
+            <% bestSellers.forEach((p) => { %>
+              <a href="/products/<%= p.id %>" class="highlight-item">
+                <img src="<%= p.images && p.images.length > 0 ? p.images[0] : '' %>" alt="<%= p.name %>" style="width:40px;height:40px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.1rem;">
+                  <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);"><%= p.name %></span>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+                    <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);"><%= p.price.toLocaleString('vi-VN') %>đ</span>
+                    <span style="font-size:.72rem;color:var(--clr-muted);white-space:nowrap;">Đã bán <%= p.soldCount %></span>
+                  </div>
+                </div>
+              </a>
+            <% }) %>
+          </div>
         </div>
       </div>
     </section>
@@ -224,7 +259,7 @@
       <div id="mainProductSentinel" style="height:8px;"></div>
     </section>
   </main>
- 
+
   <script>
     window.__PRODUCTS__ = <%- JSON.stringify(products) %>;
     window.__PRODUCTS_COUNT__ = <%= productsCount %>;

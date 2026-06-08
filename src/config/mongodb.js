@@ -38,6 +38,21 @@ async function seedDatabaseIfEmpty() {
     { upsert: true }
   );
 
+  await User.updateOne(
+    { username: "admin" },
+    {
+      $set: {
+        username: "admin",
+        password: hashedPassword,
+        fullName: "Administrator",
+        email: "admin@example.com",
+        isVerified: true,
+        role: "admin"
+      }
+    },
+    { upsert: true }
+  );
+
   await User.deleteOne({ username: "member01" });
 }
 

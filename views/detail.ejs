@@ -36,18 +36,21 @@
   <!-- ══ MAIN ════════════════════════════════════════ -->
   <main style="max-width:1200px;margin:0 auto;padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:2rem;">
 
-    <!-- Breadcrumb -->
-    <nav style="font-size:.82rem;color:var(--clr-muted);display:flex;align-items:center;gap:.4rem;">
-      <a href="/" style="color:var(--clr-primary-light);text-decoration:none;font-weight:500;">Trang chủ</a>
-      <span>/</span>
-      <span style="color:var(--clr-primary-light)">
-        <%= product.category %>
-      </span>
-      <span>/</span>
-      <span style="color:var(--clr-text-soft);">
-        <%= product.name %>
-      </span>
-    </nav>
+    <!-- Breadcrumb with Back Button -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:-1rem;">
+      <a href="javascript:history.back()" class="btn btn-secondary btn-sm" onclick="if(document.referrer && document.referrer.indexOf(window.location.host) !== -1) { return true; } else { this.href = '/'; }">← Quay lại</a>
+      <nav style="font-size:.82rem;color:var(--clr-muted);display:flex;align-items:center;gap:.4rem;">
+        <a href="/" style="color:var(--clr-primary-light);text-decoration:none;font-weight:500;">Trang chủ</a>
+        <span>/</span>
+        <span style="color:var(--clr-primary-light)">
+          <%= product.category %>
+        </span>
+        <span>/</span>
+        <span style="color:var(--clr-text-soft);">
+          <%= product.name %>
+        </span>
+      </nav>
+    </div>
 
     <!-- Product section -->
     <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;align-items:start;"

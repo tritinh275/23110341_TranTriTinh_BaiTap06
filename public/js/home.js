@@ -39,8 +39,10 @@ function productCard(item) {
       <div class="card-body">
         <span class="card-badge">${item.category}</span>
         <span class="card-name">${item.name}</span>
-        <span class="card-price">${formatter.format(item.price)}đ</span>
-        <span class="card-original-price">${formatter.format(item.originalPrice)}đ</span>
+        <div style="display:flex;align-items:baseline;gap:.4rem;margin-top:auto;flex-wrap:wrap;">
+          <span class="card-price">${formatter.format(item.price)}đ</span>
+          <span class="card-original-price">${formatter.format(item.originalPrice)}đ</span>
+        </div>
         <span class="card-meta">★ ${item.rating} · Còn ${item.stock}</span>
       </div>
     </a>
@@ -50,7 +52,7 @@ function productCard(item) {
 function topCard(item, rank, mode) {
   const metric = mode === "most-viewed"
     ? `👁 ${formatter.format(item.viewCount)}`
-    : `📦 ${formatter.format(item.soldCount)}`;
+    : `Đã bán ${formatter.format(item.soldCount)}`;
   const imgUrl = item.images && item.images.length > 0 ? item.images[0] : '';
   return `
     <a href="/products/${item.id}" style="display:flex;align-items:center;gap:.75rem;padding:.5rem;border-radius:10px;text-decoration:none;color:inherit;transition:all .15s;border:1px solid transparent;" onmouseover="this.style.background='var(--clr-bg)';this.style.borderColor='var(--clr-border)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'">
