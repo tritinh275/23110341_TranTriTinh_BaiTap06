@@ -60,7 +60,7 @@ function renderCheckout(data) {
     .map(
       (item) => `
         <div class="cart-item">
-          <img src="${item.image}" alt="${item.name}" />
+          <img src="${item.image}" alt="${item.name}" loading="lazy" />
           <div class="item-info">
             <div class="item-name">${item.name}</div>
             <div style="font-size:.75rem;color:var(--clr-muted);">SL: ${item.quantity}</div>

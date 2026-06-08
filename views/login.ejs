@@ -13,26 +13,9 @@
 <body>
   <div class="login-wrapper">
     <!-- Brand side -->
-    <div class="login-brand">
+    <div class="login-brand" style="display: flex; align-items: center; justify-content: center; text-align: center;">
       <div style="position:relative;z-index:1">
-        <div style="font-size:2rem;margin-bottom:1.5rem;">👟</div>
-        <div
-          style="font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-bottom:.5rem;">
-          SneakerHub</div>
-        <h2>Giày đỉnh —<br />phong cách thật.</h2>
-        <p style="margin-top:.75rem;">Hàng nghìn mẫu giày thể thao chính hãng, giao hàng toàn quốc, hoàn tiền 30 ngày.
-        </p>
-        <div style="margin-top:2rem;display:flex;flex-direction:column;gap:.6rem;">
-          <div style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;opacity:.8;">
-            <span style="font-size:1rem;">✅</span> Miễn phí vận chuyển đơn từ 500k
-          </div>
-          <div style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;opacity:.8;">
-            <span style="font-size:1rem;">✅</span> Đổi trả dễ dàng trong 30 ngày
-          </div>
-          <div style="display:flex;align-items:center;gap:.6rem;font-size:.85rem;opacity:.8;">
-            <span style="font-size:1rem;">✅</span> Hàng chính hãng 100%
-          </div>
-        </div>
+        <h2 style="font-size: 3rem; font-weight: 900; margin: 0;">Đăng nhập</h2>
       </div>
     </div>
 
@@ -95,6 +78,10 @@
 
       const data = await response.json();
       if (!response.ok) {
+        if (data.unverified) {
+          window.location.href = `/verify-otp?username=${encodeURIComponent(payload.username)}`;
+          return;
+        }
         errorText.textContent = data.message || "Đăng nhập thất bại";
         errorText.classList.remove("hidden");
         loginBtn.textContent = "Đăng nhập";

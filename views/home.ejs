@@ -88,7 +88,7 @@
         <h2 class="section-title">Top 10 sản phẩm nổi bật</h2>
         <span style="font-size:.78rem;color:var(--clr-muted);">Phân trang ngang theo từng nhóm</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;">
         <!-- Best selling -->
         <div style="border:1px solid var(--clr-border);border-radius:var(--radius-md);padding:1rem;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
@@ -217,11 +217,18 @@
       </div>
       <div id="productList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">
       </div>
+      <p id="mainProductLoading"
+        style="text-align:center;font-size:.82rem;color:var(--clr-muted);margin-top:1rem;display:none;">
+        ⏳ Đang tải thêm sản phẩm...
+      </p>
+      <div id="mainProductSentinel" style="height:8px;"></div>
     </section>
   </main>
-
+ 
   <script>
     window.__PRODUCTS__ = <%- JSON.stringify(products) %>;
+    window.__PRODUCTS_COUNT__ = <%= productsCount %>;
+    window.__PRODUCTS_LIMIT__ = <%= productsLimit %>;
     window.__CATEGORIES__ = <%- JSON.stringify(categories) %>;
   </script>
   <script src="/public/js/nav.js"></script>

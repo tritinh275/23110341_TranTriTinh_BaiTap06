@@ -31,11 +31,27 @@ pageRouter.get("/register", (req, res) => {
   return res.render("register");
 });
 
+pageRouter.get("/verify-otp", (req, res) => {
+  const token = req.cookies?.token;
+  if (token) {
+    try {
+      const payload = verifyToken(token);
+      if (payload.role === "member") return res.redirect("/");
+    } catch (error) {
+      res.clearCookie("token");
+    }
+  }
+  const username = req.query.username || "";
+  return res.render("verify-otp", { username });
+});
+
 pageRouter.get("/", requireMember, async (req, res, next) => {
   try {
-    const [categories, products, promotions, newest, bestSellers] = await Promise.all([
+    const limit = 8;
+    const [categories, products, productsCount, promotions, newest, bestSellers] = await Promise.all([
       Product.distinct("category"),
-      Product.find({}).sort({ createdAt: -1 }).lean(),
+      Product.find({}).sort({ createdAt: -1 }).limit(limit).lean(),
+      Product.countDocuments({}),
       Product.find({ $expr: { $gt: ["$originalPrice", "$price"] } }).limit(4).lean(),
       Product.find({}).sort({ createdAt: -1 }).limit(4).lean(),
       Product.find({}).sort({ soldCount: -1 }).limit(4).lean()
@@ -47,6 +63,8 @@ pageRouter.get("/", requireMember, async (req, res, next) => {
       user: req.user,
       categories,
       products,
+      productsCount,
+      productsLimit: limit,
       promotions,
       newest,
       bestSellers

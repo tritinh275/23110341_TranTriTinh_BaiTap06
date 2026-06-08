@@ -3,6 +3,24 @@ const productList = document.getElementById("productList");
 const filterForm = document.getElementById("filterForm");
 const resultCount = document.getElementById("resultCount");
 
+const mainProductLoading = document.getElementById("mainProductLoading");
+const mainProductSentinel = document.getElementById("mainProductSentinel");
+
+const mainProductState = {
+  page: 1,
+  totalPages: Math.max(Math.ceil((window.__PRODUCTS_COUNT__ || 0) / (window.__PRODUCTS_LIMIT__ || 8)), 1),
+  total: window.__PRODUCTS_COUNT__ || 0,
+  isLoading: false,
+  filters: {}
+};
+
+function setMainProductLoading(isLoading) {
+  mainProductState.isLoading = isLoading;
+  if (mainProductLoading) {
+    mainProductLoading.style.display = isLoading ? "block" : "none";
+  }
+}
+
 const categoryTabs = document.getElementById("categoryTabs");
 const categoryProductList = document.getElementById("categoryProductList");
 const categoryResultCount = document.getElementById("categoryResultCount");
@@ -17,7 +35,7 @@ const mostViewedPage = document.getElementById("mostViewedPage");
 function productCard(item) {
   return `
     <a class="product-card" href="/products/${item.id}">
-      <img src="${item.images[0]}" alt="${item.name}" />
+      <img src="${item.images[0]}" alt="${item.name}" loading="lazy" />
       <div class="card-body">
         <span class="card-badge">${item.category}</span>
         <span class="card-name">${item.name}</span>
@@ -31,20 +49,30 @@ function productCard(item) {
 
 function topCard(item, rank, mode) {
   const metric = mode === "most-viewed"
-    ? `👁 ${formatter.format(item.viewCount)} lượt xem`
-    : `📦 ${formatter.format(item.soldCount)} đã bán`;
+    ? `👁 ${formatter.format(item.viewCount)}`
+    : `📦 ${formatter.format(item.soldCount)}`;
+  const imgUrl = item.images && item.images.length > 0 ? item.images[0] : '';
   return `
-    <a href="/products/${item.id}" style="display:flex;align-items:center;gap:.65rem;padding:.45rem .5rem;border-radius:8px;text-decoration:none;color:inherit;transition:background .15s;" onmouseover="this.style.background='var(--clr-bg)'" onmouseout="this.style.background='transparent'">
-      <span style="min-width:22px;height:22px;border-radius:50%;background:var(--clr-primary-faint);color:var(--clr-primary);font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${rank}</span>
-      <span style="flex:1;font-size:.82rem;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.name}</span>
-      <span style="font-size:.72rem;color:var(--clr-muted);white-space:nowrap;">${metric}</span>
+    <a href="/products/${item.id}" style="display:flex;align-items:center;gap:.75rem;padding:.5rem;border-radius:10px;text-decoration:none;color:inherit;transition:all .15s;border:1px solid transparent;" onmouseover="this.style.background='var(--clr-bg)';this.style.borderColor='var(--clr-border)'" onmouseout="this.style.background='transparent';this.style.borderColor='transparent'">
+      <span style="min-width:24px;height:24px;border-radius:50%;background:var(--clr-primary-faint);color:var(--clr-primary);font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${rank}</span>
+      <img src="${imgUrl}" alt="${item.name}" style="width:48px;height:48px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--clr-border);" loading="lazy" />
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:.15rem;">
+        <span style="font-size:.82rem;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--clr-text);">${item.name}</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+          <span style="font-size:.8rem;font-weight:700;color:var(--clr-primary);">${formatter.format(item.price)}đ</span>
+          <span style="font-size:.72rem;color:var(--clr-muted);white-space:nowrap;">${metric}</span>
+        </div>
+      </div>
     </a>
   `;
 }
 
-function renderProducts(items) {
-  resultCount.textContent = `${items.length} sản phẩm`;
-  if (!items.length) {
+function renderProducts(items, append = false) {
+  resultCount.textContent = `${mainProductState.total} sản phẩm`;
+  if (!append) {
+    productList.innerHTML = "";
+  }
+  if (!items.length && !append) {
     productList.innerHTML = `
       <div style="grid-column:1/-1;background:var(--clr-surface);border-radius:var(--radius-lg);padding:2rem;text-align:center;color:var(--clr-muted);border:1px dashed var(--clr-border);">
         Không tìm thấy sản phẩm phù hợp bộ lọc.
@@ -52,14 +80,17 @@ function renderProducts(items) {
     `;
     return;
   }
-  productList.innerHTML = items.map(productCard).join("");
+  if (append) {
+    productList.insertAdjacentHTML("beforeend", items.map(productCard).join(""));
+  } else {
+    productList.innerHTML = items.map(productCard).join("");
+  }
 }
 
 async function fetchFilteredProducts(params) {
   const query = new URLSearchParams(params);
   const response = await fetch(`/api/products?${query.toString()}`);
-  const data = await response.json();
-  return data.data || [];
+  return response.json();
 }
 
 filterForm.addEventListener("submit", async (event) => {
@@ -71,8 +102,27 @@ filterForm.addEventListener("submit", async (event) => {
   }
   if (!payload.sort) payload.sort = "newest";
 
-  const items = await fetchFilteredProducts(payload);
-  renderProducts(items);
+  mainProductState.filters = payload;
+  mainProductState.page = 1;
+  mainProductState.total = 0;
+  mainProductState.totalPages = 1;
+  setMainProductLoading(true);
+
+  try {
+    const res = await fetchFilteredProducts({ ...payload, page: 1, limit: 8 });
+    const items = res.data || [];
+    const meta = res.meta || {};
+
+    mainProductState.page = meta.page || 1;
+    mainProductState.totalPages = meta.totalPages || 1;
+    mainProductState.total = meta.total || 0;
+
+    renderProducts(items, false);
+  } catch (error) {
+    console.error("Lỗi khi tải sản phẩm:", error);
+  } finally {
+    setMainProductLoading(false);
+  }
 });
 
 const categories = window.__CATEGORIES__ || [];
@@ -170,6 +220,38 @@ const lazyObserver = new IntersectionObserver(
 );
 
 if (categorySentinel) lazyObserver.observe(categorySentinel);
+
+async function loadMainProductPage(page, append = false) {
+  if (mainProductState.isLoading) return;
+  setMainProductLoading(true);
+  try {
+    const res = await fetchFilteredProducts({ ...mainProductState.filters, page: String(page), limit: "8" });
+    const items = res.data || [];
+    const meta = res.meta || {};
+
+    mainProductState.page = meta.page || 1;
+    mainProductState.totalPages = meta.totalPages || 1;
+    mainProductState.total = meta.total || 0;
+
+    renderProducts(items, append);
+  } catch (error) {
+    console.error("Lỗi khi tải thêm sản phẩm:", error);
+  } finally {
+    setMainProductLoading(false);
+  }
+}
+
+const mainProductObserver = new IntersectionObserver(
+  async (entries) => {
+    const firstEntry = entries[0];
+    if (!firstEntry?.isIntersecting) return;
+    if (mainProductState.isLoading || mainProductState.page >= mainProductState.totalPages) return;
+    await loadMainProductPage(mainProductState.page + 1, true);
+  },
+  { rootMargin: "250px 0px 250px 0px" }
+);
+
+if (mainProductSentinel) mainProductObserver.observe(mainProductSentinel);
 
 const topStates = {
   "best-selling": {

@@ -6,6 +6,7 @@ const { Cart } = require("../models/Cart");
 const { Order } = require("../models/Order");
 const { signMemberToken } = require("../utils/jwt");
 const { requireMemberApi } = require("../middleware/auth");
+const { generateOTP, sendOTP } = require("../utils/otp");
 
 const apiRouter = express.Router();
 
@@ -226,17 +227,23 @@ async function buildCartPayload(cart) {
 
 apiRouter.post("/auth/register", async (req, res, next) => {
   try {
-    const { fullName, username, password, confirmPassword } = req.body;
+    const { fullName, email, username, password, confirmPassword } = req.body;
 
-    if (!fullName || !username || !password || !confirmPassword) {
+    if (!fullName || !email || !username || !password || !confirmPassword) {
       return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin" });
     }
 
     const trimmedFullName = String(fullName).trim();
+    const trimmedEmail = String(email).trim();
     const trimmedUsername = String(username).trim();
 
     if (trimmedFullName.length < 2 || trimmedFullName.length > 50) {
       return res.status(400).json({ message: "Họ và tên phải từ 2 đến 50 ký tự" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return res.status(400).json({ message: "Định dạng email không hợp lệ" });
     }
 
     if (trimmedUsername.length < 3 || trimmedUsername.length > 20) {
@@ -261,25 +268,33 @@ apiRouter.post("/auth/register", async (req, res, next) => {
       return res.status(400).json({ message: "Tên đăng nhập đã tồn tại" });
     }
 
+    const existingEmail = await User.findOne({ email: { $regex: new RegExp(`^${trimmedEmail}$`, "i") } }).lean();
+    if (existingEmail) {
+      return res.status(400).json({ message: "Email này đã được sử dụng" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
 
     const newUser = await User.create({
       username: trimmedUsername,
       password: hashedPassword,
       fullName: trimmedFullName,
+      email: trimmedEmail,
+      isVerified: false,
+      otp,
+      otpExpires,
       role: "member"
     });
 
-    const token = signMemberToken(newUser);
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 8 * 60 * 60 * 1000
-    });
+    await sendOTP(trimmedEmail, otp, trimmedUsername);
 
-    return res.status(201).json({
-      message: "Đăng ký thành công",
-      user: { username: newUser.username, fullName: newUser.fullName, role: newUser.role }
+    return res.status(200).json({
+      otpRequired: true,
+      username: newUser.username,
+      email: newUser.email,
+      message: "Vui lòng xác thực mã OTP được gửi tới email của bạn."
     });
   } catch (error) {
     return next(error);
@@ -293,7 +308,7 @@ apiRouter.post("/auth/login", async (req, res, next) => {
       return res.status(400).json({ message: "Vui lòng nhập tên đăng nhập và mật khẩu" });
     }
 
-    const user = await User.findOne({ username: String(username).trim() }).lean();
+    const user = await User.findOne({ username: String(username).trim() });
 
     if (!user || user.role !== "member") {
       return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
@@ -302,6 +317,24 @@ apiRouter.post("/auth/login", async (req, res, next) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Sai tài khoản hoặc mật khẩu" });
+    }
+
+    // Check if account is verified
+    if (!user.isVerified) {
+      const otp = generateOTP();
+      const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+      user.otp = otp;
+      user.otpExpires = otpExpires;
+      await user.save();
+
+      await sendOTP(user.email, otp, user.username);
+
+      return res.status(403).json({
+        unverified: true,
+        username: user.username,
+        email: user.email,
+        message: "Tài khoản chưa xác thực. Mã OTP mới đã được gửi."
+      });
     }
 
     const token = signMemberToken(user);
@@ -314,6 +347,84 @@ apiRouter.post("/auth/login", async (req, res, next) => {
     return res.json({
       message: "Đăng nhập thành công",
       user: { username: user.username, fullName: user.fullName, role: user.role }
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+apiRouter.post("/auth/verify-otp", async (req, res, next) => {
+  try {
+    const { username, otp } = req.body;
+    if (!username || !otp) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin xác thực" });
+    }
+
+    const user = await User.findOne({ username: String(username).trim() });
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Tài khoản này đã được xác thực trước đó" });
+    }
+
+    if (user.otp !== String(otp).trim()) {
+      return res.status(400).json({ message: "Mã OTP không chính xác" });
+    }
+
+    if (new Date() > user.otpExpires) {
+      return res.status(400).json({ message: "Mã OTP đã hết hạn, vui lòng gửi lại mã mới" });
+    }
+
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpires = undefined;
+    await user.save();
+
+    const token = signMemberToken(user);
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 8 * 60 * 60 * 1000
+    });
+
+    return res.json({
+      message: "Xác thực tài khoản thành công",
+      user: { username: user.username, fullName: user.fullName, role: user.role }
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+apiRouter.post("/auth/resend-otp", async (req, res, next) => {
+  try {
+    const { username } = req.body;
+    if (!username) {
+      return res.status(400).json({ message: "Vui lòng cung cấp tên đăng nhập" });
+    }
+
+    const user = await User.findOne({ username: String(username).trim() });
+    if (!user) {
+      return res.status(404).json({ message: "Không tìm thấy tài khoản" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Tài khoản đã được xác thực" });
+    }
+
+    const otp = generateOTP();
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+
+    user.otp = otp;
+    user.otpExpires = otpExpires;
+    await user.save();
+
+    await sendOTP(user.email, otp, user.username);
+
+    return res.json({
+      message: "Gửi lại mã OTP thành công. Vui lòng kiểm tra email của bạn."
     });
   } catch (error) {
     return next(error);

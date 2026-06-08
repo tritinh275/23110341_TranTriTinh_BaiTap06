@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SneakerHub – Xác thực OTP để hoàn tất đăng ký tài khoản." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/public/css/custom.css" />
+  <title>Xác thực mã OTP</title>
+  <style>
+    /* Custom style for digit input boxes */
+    .otp-input-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin: 1.5rem 0;
+    }
+    .otp-digit {
+      width: 3rem;
+      height: 3.5rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      border: 1.5px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      background: var(--clr-surface);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+    .otp-digit:focus {
+      border-color: var(--clr-primary-light);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+    }
+    /* Disable arrows on type=number */
+    .otp-digit::-webkit-outer-spin-button,
+    .otp-digit::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .otp-digit[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-wrapper">
+    <!-- Brand side -->
+    <div class="login-brand" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+      <div style="position:relative;z-index:1">
+        <h2 style="font-size: 3rem; font-weight: 900; margin: 0;">Xác thực OTP</h2>
+      </div>
+    </div>
+
+    <!-- Form side -->
+    <div class="login-form-side">
+      <div class="login-box fade-up">
+        <a href="/" class="nav-logo" style="font-size:1.1rem;margin-bottom:1.5rem;display:inline-flex;">
+          SneakerHub<span class="dot"></span>
+        </a>
+        <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:.25rem;letter-spacing:-.3px;">Xác thực OTP</h1>
+        <p style="font-size:.85rem;color:var(--clr-muted);margin-bottom:1rem;">
+          Nhập mã xác thực gồm 6 chữ số đã được gửi đến tài khoản của bạn.
+        </p>
+
+
+
+        <form id="otpForm" style="display:flex;flex-direction:column;">
+          <input type="hidden" id="username" name="username" value="<%= username %>" />
+          
+          <div class="otp-input-container">
+            <input type="number" class="otp-digit" maxlength="1" required autocomplete="off" pattern="[0-9]*" inputmode="numeric" />
+            <input type="number" class="otp-digit" maxlength="1" required autocomplete="off" pattern="[0-9]*" inputmode="numeric" />
+            <input type="number" class="otp-digit" maxlength="1" required autocomplete="off" pattern="[0-9]*" inputmode="numeric" />
+            <input type="number" class="otp-digit" maxlength="1" required autocomplete="off" pattern="[0-9]*" inputmode="numeric" />
+            <input type="number" class="otp-digit" maxlength="1" required autocomplete="off" pattern="[0-9]*" inputmode="numeric" />
+            <input type="number" class="otp-digit" maxlength="1" required autocomplete="off" pattern="[0-9]*" inputmode="numeric" />
+          </div>
+
+          <button id="verifyBtn" class="btn btn-primary btn-full btn-lg" type="submit" style="margin-top:.5rem;">
+            Xác nhận
+          </button>
+        </form>
+
+        <p id="errorText" class="hidden"
+          style="margin-top:.85rem;font-size:.82rem;color:#dc2626;background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:.5rem .75rem;">
+        </p>
+        <p id="successText" class="hidden"
+          style="margin-top:.85rem;font-size:.82rem;color:#166534;background:#dcfce7;border:1px solid #bbf7d0;border-radius:8px;padding:.5rem .75rem;">
+        </p>
+
+        <div style="margin-top:1.5rem;text-align:center;font-size:.85rem;color:var(--clr-muted);">
+          Không nhận được mã? 
+          <button id="resendBtn" disabled style="color:var(--clr-primary);font-weight:600;background:none;border:none;padding:0;font-family:inherit;cursor:not-allowed;opacity:0.5;text-decoration:underline;">
+            Gửi lại (<span id="countdown">60</span>s)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const digits = document.querySelectorAll('.otp-digit');
+    const otpForm = document.getElementById('otpForm');
+    const errorText = document.getElementById('errorText');
+    const successText = document.getElementById('successText');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const countdownSpan = document.getElementById('countdown');
+    const username = document.getElementById('username').value;
+
+    let resendTimer = 60;
+    let timerInterval;
+
+    function startTimer() {
+      resendBtn.disabled = true;
+      resendBtn.style.cursor = 'not-allowed';
+      resendBtn.style.opacity = '0.5';
+      resendTimer = 60;
+      if (countdownSpan) countdownSpan.textContent = resendTimer;
+      resendBtn.innerHTML = `Gửi lại (<span id="countdown">${resendTimer}</span>s)`;
+      
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        resendTimer--;
+        const span = document.getElementById('countdown');
+        if (span) span.textContent = resendTimer;
+        
+        if (resendTimer <= 0) {
+          clearInterval(timerInterval);
+          resendBtn.disabled = false;
+          resendBtn.style.cursor = 'pointer';
+          resendBtn.style.opacity = '1';
+          resendBtn.textContent = 'Gửi lại ngay';
+        }
+      }, 1000);
+    }
+
+    // Initialize timer on load
+    startTimer();
+
+    // Auto-focus first digit input
+    if (digits.length > 0) {
+      digits[0].focus();
+    }
+
+    // Attach event listeners to digit inputs
+    digits.forEach((input, index) => {
+      // Focus navigation on input
+      input.addEventListener('input', (e) => {
+        const value = e.target.value;
+        if (value.length > 1) {
+          e.target.value = value.slice(-1);
+        }
+        
+        if (e.target.value && index < digits.length - 1) {
+          digits[index + 1].focus();
+        }
+      });
+
+      // Handle backspace key
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && index > 0) {
+          digits[index - 1].focus();
+        }
+      });
+
+      // Handle paste action
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text').trim();
+        if (/^\d{6}$/.test(text)) {
+          for (let i = 0; i < digits.length; i++) {
+            digits[i].value = text[i];
+          }
+          digits[digits.length - 1].focus();
+        }
+      });
+    });
+
+    // Form submission
+    otpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorText.classList.add('hidden');
+      successText.classList.add('hidden');
+
+      // Combine digits to construct the 6-digit OTP code
+      let otpCode = '';
+      digits.forEach(input => {
+        otpCode += input.value;
+      });
+
+      if (otpCode.length !== 6) {
+        showError('Vui lòng nhập đầy đủ mã OTP 6 chữ số');
+        return;
+      }
+
+      verifyBtn.textContent = 'Đang xác nhận...';
+      verifyBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/auth/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, otp: otpCode })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          showError(data.message || 'Xác thực thất bại');
+          verifyBtn.textContent = 'Xác nhận';
+          verifyBtn.disabled = false;
+          return;
+        }
+
+        showSuccess('Xác thực thành công! Đang chuyển hướng...');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1500);
+
+      } catch (err) {
+        showError('Lỗi kết nối mạng, vui lòng thử lại.');
+        verifyBtn.textContent = 'Xác nhận';
+        verifyBtn.disabled = false;
+      }
+    });
+
+    // Resend action
+    resendBtn.addEventListener('click', async () => {
+      errorText.classList.add('hidden');
+      successText.classList.add('hidden');
+      
+      try {
+        const response = await fetch('/api/auth/resend-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          showError(data.message || 'Gửi lại OTP thất bại');
+          return;
+        }
+
+        showSuccess('Mã OTP mới đã được gửi đi!');
+        startTimer();
+      } catch (err) {
+        showError('Lỗi kết nối mạng, vui lòng thử lại.');
+      }
+    });
+
+    function showError(msg) {
+      errorText.textContent = msg;
+      errorText.classList.remove('hidden');
+    }
+
+    function showSuccess(msg) {
+      successText.textContent = msg;
+      successText.classList.remove('hidden');
+    }
+  </script>
+</body>
+
+</html>

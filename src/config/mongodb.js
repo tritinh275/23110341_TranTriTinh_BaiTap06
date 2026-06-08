@@ -30,6 +30,8 @@ async function seedDatabaseIfEmpty() {
         username: "user",
         password: hashedPassword,
         fullName: "Tran Tri Tinh",
+        email: "user@example.com",
+        isVerified: true,
         role: "member"
       }
     },
